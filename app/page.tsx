@@ -2,23 +2,22 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   ArrowRight,
   FileText,
-  Upload,
   Download,
   Share2,
-  CheckCircle2,
+  Upload,
   Zap,
   Shield,
-  Users,
 } from "lucide-react";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-50 font-sans">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
-      <nav className="border-b border-zinc-800 px-6 py-4">
+      <nav className="border-b border-border px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <span className="text-xl font-semibold tracking-tight">briefed</span>
           <div className="flex items-center gap-3">
@@ -34,18 +33,15 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-6 pt-24 pb-20 text-center">
-        <Badge
-          variant="secondary"
-          className="mb-6 bg-zinc-800 text-zinc-300 border-zinc-700"
-        >
+        <Badge variant="secondary" className="mb-6">
           Built for creative freelancers
         </Badge>
         <h1 className="text-5xl sm:text-7xl font-bold tracking-tighter mb-6 leading-none">
           Stop losing briefs
           <br />
-          <span className="text-zinc-400">in your DMs.</span>
+          <span className="text-muted-foreground">in your DMs.</span>
         </h1>
-        <p className="text-lg text-zinc-400 max-w-xl mx-auto mb-10">
+        <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10">
           Turn chaotic client messages into structured, actionable project
           briefs — in minutes. Send a guided form, get a clean PDF.
         </p>
@@ -55,20 +51,15 @@ export default function HomePage() {
               Start for free <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            asChild
-            className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-          >
+          <Button size="lg" variant="outline" asChild>
             <Link href="/brief/example">See example brief</Link>
           </Button>
         </div>
       </section>
 
-      {/* Social proof */}
-      <section className="border-y border-zinc-800 py-8">
-        <div className="max-w-6xl mx-auto px-6 flex flex-wrap items-center justify-center gap-8 text-sm text-zinc-500">
+      {/* Social proof strip */}
+      <div className="border-y border-border py-6">
+        <div className="max-w-6xl mx-auto px-6 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
           {[
             "✓ No credit card required",
             "✓ Set up in 2 minutes",
@@ -77,14 +68,14 @@ export default function HomePage() {
             <span key={t}>{t}</span>
           ))}
         </div>
-      </section>
+      </div>
 
       {/* How it works */}
       <section className="max-w-6xl mx-auto px-6 py-24">
         <h2 className="text-3xl font-bold tracking-tight mb-2 text-center">
           How it works
         </h2>
-        <p className="text-zinc-400 text-center mb-14">
+        <p className="text-muted-foreground text-center mb-14">
           Three steps to a clean, professional brief.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -108,81 +99,81 @@ export default function HomePage() {
               desc: "Get a clean, structured brief you can reference throughout the whole project.",
             },
           ].map(({ icon: Icon, step, title, desc }) => (
-            <Card key={step} className="bg-zinc-900 border-zinc-800">
+            <Card key={step}>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-xs font-mono text-zinc-500">
+                  <span className="text-xs font-mono text-muted-foreground">
                     {step}
                   </span>
-                  <Icon className="h-5 w-5 text-zinc-300" />
+                  <Icon className="h-5 w-5 text-primary" />
                 </div>
-                <h3 className="font-semibold text-zinc-100 mb-2">{title}</h3>
-                <p className="text-sm text-zinc-400">{desc}</p>
+                <h3 className="font-semibold mb-2">{title}</h3>
+                <p className="text-sm text-muted-foreground">{desc}</p>
               </CardContent>
             </Card>
           ))}
         </div>
       </section>
 
+      <Separator />
+
       {/* Features */}
-      <section className="bg-zinc-900 border-y border-zinc-800">
-        <div className="max-w-6xl mx-auto px-6 py-24">
-          <h2 className="text-3xl font-bold tracking-tight mb-14 text-center">
-            Everything you need
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: FileText,
-                title: "Multi-step form",
-                desc: "Guided questions that clients actually fill in completely.",
-              },
-              {
-                icon: Upload,
-                title: "Moodboard uploads",
-                desc: "Clients can attach inspiration images directly to the brief.",
-              },
-              {
-                icon: Download,
-                title: "PDF export",
-                desc: "One-click export to a professional, shareable PDF.",
-              },
-              {
-                icon: Share2,
-                title: "Shareable links",
-                desc: "Send a unique link for each project — no client login needed.",
-              },
-              {
-                icon: Zap,
-                title: "Dashboard",
-                desc: "Manage all your briefs in one place. Search, filter, archive.",
-              },
-              {
-                icon: Shield,
-                title: "Secure by default",
-                desc: "Auth powered by Clerk. Your data stays yours.",
-              },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex gap-4">
-                <div className="mt-0.5 flex-shrink-0">
-                  <Icon className="h-5 w-5 text-zinc-400" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-zinc-100 mb-1">{title}</h3>
-                  <p className="text-sm text-zinc-400">{desc}</p>
-                </div>
+      <section className="max-w-6xl mx-auto px-6 py-24">
+        <h2 className="text-3xl font-bold tracking-tight mb-14 text-center">
+          Everything you need
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          {[
+            {
+              icon: FileText,
+              title: "Multi-step form",
+              desc: "Guided questions that clients actually fill in completely.",
+            },
+            {
+              icon: Upload,
+              title: "Moodboard uploads",
+              desc: "Clients can attach inspiration images directly to the brief.",
+            },
+            {
+              icon: Download,
+              title: "PDF export",
+              desc: "One-click export to a professional, shareable PDF.",
+            },
+            {
+              icon: Share2,
+              title: "Shareable links",
+              desc: "Send a unique link for each project — no client login needed.",
+            },
+            {
+              icon: Zap,
+              title: "Dashboard",
+              desc: "Manage all your briefs in one place. Search, filter, archive.",
+            },
+            {
+              icon: Shield,
+              title: "Secure by default",
+              desc: "Auth powered by Clerk. Your data stays yours.",
+            },
+          ].map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="flex gap-4">
+              <Icon className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+              <div>
+                <h3 className="font-medium mb-1">{title}</h3>
+                <p className="text-sm text-muted-foreground">{desc}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </section>
+
+      <Separator />
 
       {/* CTA */}
       <section className="max-w-6xl mx-auto px-6 py-24 text-center">
         <h2 className="text-4xl font-bold tracking-tight mb-4">
           Ready to get organised?
         </h2>
-        <p className="text-zinc-400 mb-8">
+        <p className="text-muted-foreground mb-8">
           Join freelancers who stopped chasing clients for project details.
         </p>
         <Button size="lg" asChild className="gap-2">
@@ -193,9 +184,9 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800 px-6 py-8">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
-          <span className="font-semibold text-zinc-400">briefed</span>
+      <footer className="border-t border-border px-6 py-8">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground">briefed</span>
           <span>Built for creatives. © {new Date().getFullYear()}</span>
         </div>
       </footer>

@@ -20,7 +20,6 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 type FormData = {
@@ -92,18 +91,18 @@ export default function BriefForm() {
     <div className="max-w-2xl mx-auto py-10 px-4">
       {/* Step indicator */}
       <div className="mb-8">
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-3">
           {STEPS.map((s, i) => (
             <div key={s.id} className="flex items-center gap-2 flex-1">
               <div className="flex items-center gap-2">
                 <div
                   className={cn(
-                    "h-7 w-7 rounded-full flex items-center justify-center text-xs font-medium border transition-colors",
+                    "h-7 w-7 rounded-full flex items-center justify-center text-xs font-medium border-2 transition-colors",
                     step > s.id
-                      ? "bg-zinc-900 border-zinc-900 text-zinc-50"
+                      ? "bg-primary border-primary text-primary-foreground"
                       : step === s.id
-                        ? "bg-zinc-50 border-zinc-50 text-zinc-900"
-                        : "bg-transparent border-zinc-200 text-zinc-400",
+                        ? "bg-primary border-primary text-primary-foreground"
+                        : "bg-background border-border text-muted-foreground",
                   )}
                 >
                   {step > s.id ? "✓" : s.id}
@@ -112,8 +111,8 @@ export default function BriefForm() {
                   className={cn(
                     "text-sm hidden sm:inline",
                     step === s.id
-                      ? "text-zinc-900 font-medium"
-                      : "text-zinc-400",
+                      ? "font-medium text-foreground"
+                      : "text-muted-foreground",
                   )}
                 >
                   {s.label}
@@ -122,15 +121,15 @@ export default function BriefForm() {
               {i < STEPS.length - 1 && (
                 <div
                   className={cn(
-                    "flex-1 h-px ml-2",
-                    step > s.id ? "bg-zinc-900" : "bg-zinc-200",
+                    "flex-1 h-px ml-1",
+                    step > s.id ? "bg-primary" : "bg-border",
                   )}
                 />
               )}
             </div>
           ))}
         </div>
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-muted-foreground">
           Step {step} of {STEPS.length}
         </p>
       </div>
@@ -147,7 +146,7 @@ export default function BriefForm() {
               <CardContent className="space-y-5">
                 <div className="space-y-2">
                   <Label htmlFor="clientName">
-                    Client Name <span className="text-red-500">*</span>
+                    Client Name <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="clientName"
@@ -171,7 +170,7 @@ export default function BriefForm() {
 
                 <div className="space-y-2">
                   <Label htmlFor="projectName">
-                    Project Name <span className="text-red-500">*</span>
+                    Project Name <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="projectName"
@@ -184,7 +183,7 @@ export default function BriefForm() {
 
                 <div className="space-y-2">
                   <Label htmlFor="projectType">
-                    Project Type <span className="text-red-500">*</span>
+                    Project Type <span className="text-destructive">*</span>
                   </Label>
                   <Select
                     value={formData.projectType}
@@ -224,7 +223,7 @@ export default function BriefForm() {
                 <div className="space-y-2">
                   <Label htmlFor="goals">
                     What do you want to achieve?{" "}
-                    <span className="text-red-500">*</span>
+                    <span className="text-destructive">*</span>
                   </Label>
                   <Textarea
                     id="goals"
@@ -355,7 +354,7 @@ export default function BriefForm() {
                     }}
                   />
                   {formData.moodboardFiles.length > 0 && (
-                    <p className="text-sm text-zinc-500">
+                    <p className="text-sm text-muted-foreground">
                       {formData.moodboardFiles.length} file(s) selected
                     </p>
                   )}

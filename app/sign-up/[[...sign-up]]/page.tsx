@@ -3,10 +3,10 @@ import Link from "next/link";
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
       <Link
         href="/"
-        className="text-2xl font-semibold text-zinc-50 tracking-tight mb-8"
+        className="text-2xl font-semibold text-foreground tracking-tight mb-8"
       >
         briefed
       </Link>
@@ -14,33 +14,23 @@ export default function SignUpPage() {
       <SignUp
         appearance={{
           variables: {
-            colorBackground: "#18181b",
-            colorInputBackground: "#09090b",
-            colorText: "#fafafa",
-            colorTextSecondary: "#a1a1aa",
-            colorInputText: "#fafafa",
-            colorPrimary: "#fafafa",
-            colorDanger: "#f87171",
-            borderRadius: "0.5rem",
+            colorBackground: "oklch(1 0 0)",
+            colorInputBackground: "oklch(0.97 0 0)",
+            colorText: "oklch(0.145 0 0)",
+            colorTextSecondary: "oklch(0.556 0 0)",
+            colorInputText: "oklch(0.145 0 0)",
+            colorPrimary: "oklch(0.56 0.25 302)",
+            colorDanger: "oklch(0.58 0.22 27)",
+            borderRadius: "0.875rem",
             fontFamily: "inherit",
             fontSize: "0.875rem",
           },
           elements: {
-            card: "shadow-none border border-zinc-800 bg-zinc-900",
-            headerTitle: "text-zinc-50 font-semibold text-lg",
-            headerSubtitle: "text-zinc-400 text-sm",
-            socialButtonsBlockButton:
-              "border border-zinc-700 bg-zinc-900 text-zinc-100 hover:bg-zinc-800 transition-colors",
-            socialButtonsBlockButtonText: "text-zinc-100 font-medium text-sm",
-            dividerLine: "bg-zinc-700",
-            dividerText: "text-zinc-500 text-xs",
-            formFieldLabel: "text-zinc-300 text-sm font-medium",
-            formFieldInput:
-              "bg-zinc-950 border border-zinc-700 text-zinc-50 placeholder:text-zinc-600 focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400 rounded-md",
-            formButtonPrimary:
-              "bg-zinc-50 text-zinc-950 hover:bg-zinc-200 font-medium rounded-md transition-colors",
-            footerActionLink: "text-zinc-300 hover:text-zinc-50",
-            footerActionText: "text-zinc-500",
+            card: "shadow-none border border-border",
+            headerTitle: "font-semibold text-lg",
+            headerSubtitle: "text-muted-foreground text-sm",
+            formButtonPrimary: "font-medium",
+            footerActionLink: "text-primary hover:text-primary/80",
           },
         }}
         routing="path"
