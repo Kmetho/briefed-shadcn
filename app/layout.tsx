@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -15,8 +16,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body>{children}</body>
-    </html>
+    <ClerkProvider
+      appearance={{
+        variables: {
+          colorPrimary: "var(--primary)",
+          colorPrimaryForeground: "var(--primary-foreground)",
+          colorBackground: "var(--card)", // Clerk uses this for the card container
+          colorForeground: "var(--foreground)",
+          colorMuted: "var(--muted)",
+          colorMutedForeground: "var(--muted-foreground)",
+          colorInput: "var(--input)",
+          colorInputForeground: "var(--foreground)",
+          colorBorder: "var(--border)",
+          colorRing: "var(--ring)",
+          colorDanger: "var(--destructive)",
+          borderRadius: "var(--radius)", // your 0.875rem
+          fontFamily: "var(--font-sans)",
+        },
+      }}
+    >
+      <html lang="en">
+        <body className={`${inter.variable} antialiased`}>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }
