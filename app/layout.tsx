@@ -21,7 +21,7 @@ export default function RootLayout({
         variables: {
           colorPrimary: "var(--primary)",
           colorPrimaryForeground: "var(--primary-foreground)",
-          colorBackground: "var(--card)", // Clerk uses this for the card container
+          colorBackground: "var(--card)",
           colorForeground: "var(--foreground)",
           colorMuted: "var(--muted)",
           colorMutedForeground: "var(--muted-foreground)",
@@ -30,7 +30,7 @@ export default function RootLayout({
           colorBorder: "var(--border)",
           colorRing: "var(--ring)",
           colorDanger: "var(--destructive)",
-          borderRadius: "var(--radius)", // your 0.875rem
+          borderRadius: "var(--radius)",
           fontFamily: "var(--font-sans)",
         },
       }}
