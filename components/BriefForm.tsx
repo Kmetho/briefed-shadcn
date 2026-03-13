@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  Brief,
+  getUserBriefs,
+  createBrief,
+  deleteBrief,
+  getBriefByShareToken,
+} from "@/lib/supabase/briefs";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";

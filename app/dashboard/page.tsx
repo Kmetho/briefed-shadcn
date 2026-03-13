@@ -1,8 +1,9 @@
 "use client";
 
+import { deleteBrief, getUserBriefs, type Brief } from "@/lib/supabase/briefs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
+import { useUser, UserButton } from "@clerk/nextjs";
 import { generatePDF } from "@/lib/generatePDF";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,37 +25,39 @@ import {
   DollarSign,
 } from "lucide-react";
 
-type Brief = {
-  id: string;
-  projectName: string;
-  clientName: string;
-  projectType: string;
-  goals: string;
-  timeline?: string;
-  budget?: string;
-  status: string;
-  createdAt: string;
-};
-
 export default function Dashboard() {
+  const { user } = useUser();
   const [briefs, setBriefs] = useState<Brief[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("briefs") || "[]");
-    setBriefs(saved);
-    setLoading(false);
-  }, []);
+    async function loadBriefs() {
+      if (!user?.id) return;
+      try {
+        const data = await getUserBriefs(user.id);
+        setBriefs(data);
+      } catch (error) {
+        console.log("Error loading briefs:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadBriefs();
+  }, [user?.id]);
 
-  function handleDownloadPDF(brief: Brief) {
-    generatePDF(brief);
-  }
+  // function handleDownloadPDF(brief: Brief) {
+  //   generatePDF(brief);
+  // }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
     if (!confirm("Delete this brief?")) return;
-    const updated = briefs.filter((b) => b.id !== id);
-    setBriefs(updated);
-    localStorage.setItem("briefs", JSON.stringify(updated));
+    try {
+      await deleteBrief(id);
+      const updated = briefs.filter((b) => b.id !== id);
+      setBriefs(updated);
+    } catch (error) {
+      console.log("Error deleting brief:", error);
+    }
   }
 
   const freeBriefsLeft = Math.max(0, 3 - briefs.length);
@@ -99,7 +102,7 @@ export default function Dashboard() {
             <CardHeader className="pb-2">
               <CardDescription>Completed</CardDescription>
               <CardTitle className="text-4xl text-primary">
-                {briefs.filter((b) => b.status === "completed").length}
+                {/* {briefs.filter((b) => b.status === "completed").length} */}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -150,14 +153,14 @@ export default function Dashboard() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <CardTitle className="text-base truncate">
-                        {brief.projectName}
+                        {brief.project_name}
                       </CardTitle>
                       <CardDescription className="mt-0.5">
-                        {brief.clientName}
+                        {brief.client_name}
                       </CardDescription>
                     </div>
                     <Badge variant="secondary" className="shrink-0 capitalize">
-                      {brief.projectType}
+                      {brief.project_type}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -187,7 +190,7 @@ export default function Dashboard() {
                     <Button
                       className="flex-1 gap-2"
                       size="sm"
-                      onClick={() => handleDownloadPDF(brief)}
+                      // onClick={() => handleDownloadPDF(brief)}
                     >
                       <Download className="h-3.5 w-3.5" /> Download PDF
                     </Button>
@@ -201,7 +204,7 @@ export default function Dashboard() {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground w-full">
-                    Created {new Date(brief.createdAt).toLocaleDateString()}
+                    Created {new Date(brief.created_at).toLocaleDateString()}
                   </p>
                 </CardFooter>
               </Card>
