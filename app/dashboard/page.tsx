@@ -3,7 +3,7 @@
 import { deleteBrief, getUserBriefs, type Brief } from "@/lib/supabase/briefs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useUser, UserButton } from "@clerk/nextjs";
+import { useUser, useSession, UserButton } from "@clerk/nextjs";
 import { generatePDF } from "@/lib/generatePDF";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,18 +23,23 @@ import {
   FileText,
   Clock,
   DollarSign,
+  Link as LinkIcon,
+  Check,
 } from "lucide-react";
 
 export default function Dashboard() {
   const { user } = useUser();
+  const { session } = useSession(); 
   const [briefs, setBriefs] = useState<Brief[]>([]);
   const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const freeBriefsLeft = Math.max(0, 3 - briefs.length);
 
   useEffect(() => {
     async function loadBriefs() {
       if (!user?.id) return;
       try {
-        const data = await getUserBriefs(user.id);
+        const data = await getUserBriefs(user.id, session);
         setBriefs(data);
       } catch (error) {
         console.log("Error loading briefs:", error);
@@ -53,7 +58,7 @@ export default function Dashboard() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this brief?")) return;
     try {
-      await deleteBrief(id);
+      await deleteBrief(id, session);
       const updated = briefs.filter((b) => b.id !== id);
       setBriefs(updated);
     } catch (error) {
@@ -62,7 +67,13 @@ export default function Dashboard() {
     }
   }
 
-  const freeBriefsLeft = Math.max(0, 3 - briefs.length);
+  function handleCopyLink(shareToken: string, briefId: string) {
+    const shareUrl = `${window.location.origin}/brief/${shareToken}`;
+    navigator.clipboard.writeText(shareUrl);
+    alert("Share link copied to clipboard!");
+    setCopiedId(briefId);
+    setTimeout(() => setCopiedId(null), 2000);
+  }
 
   if (loading) {
     return (
@@ -104,7 +115,7 @@ export default function Dashboard() {
             <CardHeader className="pb-2">
               <CardDescription>Completed</CardDescription>
               <CardTitle className="text-4xl text-primary">
-                {/* {briefs.filter((b) => b.status === "completed").length} */}
+                {briefs.filter((b) => b.status === "completed").length}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -203,6 +214,23 @@ export default function Dashboard() {
                       className="text-destructive hover:text-destructive hover:bg-destructive/10 border-border"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        handleCopyLink(brief.share_token, brief.id)
+                      }
+                    >
+                      (copiedId === brief.id ? (
+                      <>
+                        <Check className="h-3.5 w-3.5" /> Copied!
+                      </>
+                      ) : (
+                      <>
+                        <LinkIcon className="h-3.5 w-3.5" /> Share
+                      </>
+                      ))
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground w-full">

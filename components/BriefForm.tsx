@@ -1,7 +1,7 @@
 "use client";
 
 import { type Brief, createBrief } from "@/lib/supabase/briefs";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useSession } from "@clerk/nextjs";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -47,6 +47,7 @@ type BriefFormData = {
 export default function BriefForm() {
   const router = useRouter();
   const { user } = useUser();
+  const { session } = useSession();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -85,7 +86,7 @@ export default function BriefForm() {
         budget: formData.budget,
         additional_notes: formData.additional_notes,
         moodboard_urls: formData.moodboard_urls,
-      });
+      }, session);
       router.push("/dashboard?success=true");
     } catch (error) {
       console.log("Error creating brief:", error);

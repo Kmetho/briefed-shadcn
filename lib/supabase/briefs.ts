@@ -1,4 +1,5 @@
 import { createBrowserClient } from "./client";
+import { createClient } from "@supabase/supabase-js";
 
 export type Brief = {
   id: string;
@@ -17,11 +18,15 @@ export type Brief = {
   archived: boolean;
   created_at: string;
   updated_at: string;
+  status: "draft" | "completed";
 };
 
 // Fetch all briefs for the current user
-export async function getUserBriefs(userId: string): Promise<Brief[]> {
-  const supabase = createBrowserClient();
+export async function getUserBriefs(
+  userId: string,
+  session: any,
+): Promise<Brief[]> {
+  const supabase = createBrowserClient(session);
   const { data, error } = await supabase
     .from("briefs")
     .select("*")
@@ -33,8 +38,11 @@ export async function getUserBriefs(userId: string): Promise<Brief[]> {
 }
 
 // Create a new brief
-export async function createBrief(brief: Partial<Brief>): Promise<Brief> {
-  const supabase = createBrowserClient();
+export async function createBrief(
+  brief: Partial<Brief>,
+  session: any,
+): Promise<Brief> {
+  const supabase = createBrowserClient(session);
   const { data, error } = await supabase
     .from("briefs")
     .insert(brief)
@@ -46,16 +54,18 @@ export async function createBrief(brief: Partial<Brief>): Promise<Brief> {
 }
 
 // Delete a brief
-export async function deleteBrief(id: string): Promise<void> {
-  const supabase = createBrowserClient();
+export async function deleteBrief(id: string, session: any): Promise<void> {
+  const supabase = createBrowserClient(session);
   await supabase.from("briefs").delete().eq("id", id);
 }
 
 // Get a single brief by share token (for public view)
-export async function getBriefByShareToken(
-  token: string,
-): Promise<Brief | null> {
-  const supabase = createBrowserClient();
+export async function getBriefByShareToken(token: string) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+  );
+
   const { data, error } = await supabase
     .from("briefs")
     .select("*")
