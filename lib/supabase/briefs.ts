@@ -4,10 +4,10 @@ export type Brief = {
   id: string;
   user_id: string;
   project_name: string;
-  client_name: string | null;
-  client_email: string | null;
-  project_type: string | null;
-  goals: string | null;
+  client_name: string;
+  client_email: string;
+  project_type: string;
+  goals: string;
   target_audience: string | null;
   timeline: string | null;
   budget: string | null;

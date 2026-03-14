@@ -1,17 +1,5 @@
 import jsPDF from "jspdf";
-
-type BriefData = {
-  clientName: string;
-  clientEmail?: string;
-  projectName: string;
-  projectType: string;
-  goals: string;
-  targetAudience?: string;
-  timeline?: string;
-  budget?: string;
-  description?: string;
-  moodboardUrls?: string[];
-};
+import { type Brief } from "./supabase/briefs";
 
 // ─── Colour tokens (matching globals.css) ────────────────────────────────────
 const C = {
@@ -126,7 +114,7 @@ function pill(doc: jsPDF, text: string, x: number, y: number) {
 }
 
 // ─── Main export ──────────────────────────────────────────────────────────────
-export function generatePDF(data: BriefData) {
+export function generatePDF(data: Brief) {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   let y = MARGIN;
 
@@ -158,7 +146,7 @@ export function generatePDF(data: BriefData) {
   doc.setFontSize(26);
   doc.setFont("helvetica", "bold");
   setColor(doc, C.foreground);
-  const titleLines = doc.splitTextToSize(data.projectName, CONTENT_W - 40);
+  const titleLines = doc.splitTextToSize(data.project_name, CONTENT_W - 40);
   titleLines.forEach((line: string) => {
     doc.text(line, MARGIN, y);
     y += 12;
@@ -167,7 +155,7 @@ export function generatePDF(data: BriefData) {
   // Project type pill beside title
   pill(
     doc,
-    data.projectType.charAt(0).toUpperCase() + data.projectType.slice(1),
+    data.project_type.charAt(0).toUpperCase() + data.project_type.slice(1),
     MARGIN,
     y,
   );
@@ -181,9 +169,9 @@ export function generatePDF(data: BriefData) {
 
   // ── Client Info ───────────────────────────────────────────────────────────────
   y = sectionHeader(doc, "Client Information", y);
-  y = labelValue(doc, "Name:", data.clientName, y);
-  if (data.clientEmail) {
-    y = labelValue(doc, "Email:", data.clientEmail, y);
+  y = labelValue(doc, "Name:", data.client_name, y);
+  if (data.client_email) {
+    y = labelValue(doc, "Email:", data.client_email, y);
   }
   y += 6;
 
@@ -193,9 +181,9 @@ export function generatePDF(data: BriefData) {
   y += 6;
 
   // ── Target Audience ───────────────────────────────────────────────────────────
-  if (data.targetAudience) {
+  if (data.target_audience) {
     y = sectionHeader(doc, "Target Audience", y);
-    y = bodyText(doc, data.targetAudience, y);
+    y = bodyText(doc, data.target_audience, y);
     y += 6;
   }
 
@@ -234,10 +222,10 @@ export function generatePDF(data: BriefData) {
   }
 
   // ── Additional Notes ──────────────────────────────────────────────────────────
-  if (data.description) {
+  if (data.additional_notes) {
     y = addPageIfNeeded(doc, y, 40);
     y = sectionHeader(doc, "Additional Notes", y);
-    y = bodyText(doc, data.description, y);
+    y = bodyText(doc, data.additional_notes, y);
   }
 
   // ── Footer on every page ──────────────────────────────────────────────────────
@@ -262,5 +250,5 @@ export function generatePDF(data: BriefData) {
     );
   }
 
-  doc.save(`${data.projectName.replace(/\s+/g, "_")}_brief.pdf`);
+  doc.save(`${data.project_name.replace(/\s+/g, "_")}_brief.pdf`);
 }

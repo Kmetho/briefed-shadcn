@@ -38,6 +38,7 @@ export default function Dashboard() {
         setBriefs(data);
       } catch (error) {
         console.log("Error loading briefs:", error);
+        alert("Failed to load briefs");
       } finally {
         setLoading(false);
       }
@@ -45,9 +46,9 @@ export default function Dashboard() {
     loadBriefs();
   }, [user?.id]);
 
-  // function handleDownloadPDF(brief: Brief) {
-  //   generatePDF(brief);
-  // }
+  function handleDownloadPDF(brief: Brief) {
+    generatePDF(brief);
+  }
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this brief?")) return;
@@ -57,6 +58,7 @@ export default function Dashboard() {
       setBriefs(updated);
     } catch (error) {
       console.log("Error deleting brief:", error);
+      alert("Failed to delete brief");
     }
   }
 
@@ -190,7 +192,7 @@ export default function Dashboard() {
                     <Button
                       className="flex-1 gap-2"
                       size="sm"
-                      // onClick={() => handleDownloadPDF(brief)}
+                      onClick={() => handleDownloadPDF(brief)}
                     >
                       <Download className="h-3.5 w-3.5" /> Download PDF
                     </Button>

@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  Brief,
-  getUserBriefs,
-  createBrief,
-  deleteBrief,
-  getBriefByShareToken,
-} from "@/lib/supabase/briefs";
+import { type Brief, createBrief } from "@/lib/supabase/briefs";
+import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -29,19 +24,6 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-type FormData = {
-  clientName: string;
-  clientEmail: string;
-  projectName: string;
-  projectType: string;
-  goals: string;
-  targetAudience: string;
-  timeline: string;
-  budget: string;
-  description: string;
-  moodboardFiles: File[];
-};
-
 const STEPS = [
   { id: 1, label: "Client" },
   { id: 2, label: "Goals" },
@@ -49,46 +31,65 @@ const STEPS = [
   { id: 4, label: "Moodboard" },
 ];
 
+type BriefFormData = {
+  project_name: string;
+  client_name: string;
+  client_email: string;
+  project_type: string;
+  goals: string;
+  target_audience: string;
+  timeline: string;
+  budget: string;
+  additional_notes: string;
+  moodboard_urls: string[];
+};
+
 export default function BriefForm() {
   const router = useRouter();
+  const { user } = useUser();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [formData, setFormData] = useState<FormData>({
-    clientName: "",
-    clientEmail: "",
-    projectName: "",
-    projectType: "branding",
+  const [formData, setFormData] = useState<BriefFormData>({
+    project_name: "",
+    client_name: "",
+    client_email: "",
+    project_type: "",
     goals: "",
-    targetAudience: "",
+    target_audience: "",
     timeline: "",
     budget: "",
-    description: "",
-    moodboardFiles: [],
+    additional_notes: "",
+    moodboard_urls: [],
   });
 
-  function updateField(field: keyof FormData, value: any) {
+  function updateField(field: keyof BriefFormData, value: any) {
     setFormData({ ...formData, [field]: value });
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!user?.id) return;
     setIsSubmitting(true);
+
     try {
-      const briefs = JSON.parse(localStorage.getItem("briefs") || "[]");
-      const newBrief = {
-        id: Date.now().toString(),
-        ...formData,
-        moodboardFiles: undefined,
-        moodboardUrls: [],
-        status: "completed",
-        createdAt: new Date().toISOString(),
-      };
-      briefs.push(newBrief);
-      localStorage.setItem("briefs", JSON.stringify(briefs));
+      await createBrief({
+        user_id: user.id,
+        project_name: formData.project_name,
+        client_name: formData.client_name,
+        client_email: formData.client_email,
+        project_type: formData.project_type,
+        goals: formData.goals,
+        target_audience: formData.target_audience,
+        timeline: formData.timeline,
+        budget: formData.budget,
+        additional_notes: formData.additional_notes,
+        moodboard_urls: formData.moodboard_urls,
+      });
       router.push("/dashboard?success=true");
     } catch (error) {
-      console.error("Error creating brief:", error);
+      console.log("Error creating brief:", error);
+      alert("Failed to create brief. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -152,51 +153,55 @@ export default function BriefForm() {
               </CardHeader>
               <CardContent className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="clientName">
+                  <Label htmlFor="client_name">
                     Client Name <span className="text-destructive">*</span>
                   </Label>
                   <Input
-                    id="clientName"
+                    id="client_name"
                     required
-                    value={formData.clientName}
-                    onChange={(e) => updateField("clientName", e.target.value)}
+                    value={formData.client_name}
+                    onChange={(e) => updateField("client_name", e.target.value)}
                     placeholder="e.g. Acme Studios"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="clientEmail">Client Email</Label>
+                  <Label htmlFor="client_email">Client Email</Label>
                   <Input
-                    id="clientEmail"
+                    id="client_email"
                     type="email"
-                    value={formData.clientEmail}
-                    onChange={(e) => updateField("clientEmail", e.target.value)}
+                    value={formData.client_email}
+                    onChange={(e) =>
+                      updateField("client_email", e.target.value)
+                    }
                     placeholder="client@email.com"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="projectName">
+                  <Label htmlFor="project_name">
                     Project Name <span className="text-destructive">*</span>
                   </Label>
                   <Input
-                    id="projectName"
+                    id="project_name"
                     required
-                    value={formData.projectName}
-                    onChange={(e) => updateField("projectName", e.target.value)}
+                    value={formData.project_name}
+                    onChange={(e) =>
+                      updateField("project_name", e.target.value)
+                    }
                     placeholder="e.g. Brand Refresh 2025"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="projectType">
+                  <Label htmlFor="project_type">
                     Project Type <span className="text-destructive">*</span>
                   </Label>
                   <Select
-                    value={formData.projectType}
-                    onValueChange={(v) => updateField("projectType", v)}
+                    value={formData.project_type}
+                    onValueChange={(v) => updateField("project_type", v)}
                   >
-                    <SelectTrigger id="projectType">
+                    <SelectTrigger id="project_type">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -244,12 +249,12 @@ export default function BriefForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="targetAudience">Target Audience</Label>
+                  <Label htmlFor="target_audience">Target Audience</Label>
                   <Input
-                    id="targetAudience"
-                    value={formData.targetAudience}
+                    id="target_audience"
+                    value={formData.target_audience}
                     onChange={(e) =>
-                      updateField("targetAudience", e.target.value)
+                      updateField("target_audience", e.target.value)
                     }
                     placeholder="e.g. Women 25–40, tech professionals"
                   />
@@ -298,18 +303,20 @@ export default function BriefForm() {
                   <Label htmlFor="budget">Budget</Label>
                   <Input
                     id="budget"
-                    value={formData.budget}
+                    value={formData.budget} 
                     onChange={(e) => updateField("budget", e.target.value)}
                     placeholder="e.g. $2,000 – $5,000"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Additional Notes</Label>
+                  <Label htmlFor="additional_notes">Additional Notes</Label>
                   <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => updateField("description", e.target.value)}
+                    id="additional_notes"
+                    value={formData.additional_notes}
+                    onChange={(e) =>
+                      updateField("additional_notes", e.target.value)
+                    }
                     placeholder="Any other important details?"
                     rows={4}
                     className="resize-none"
@@ -357,12 +364,12 @@ export default function BriefForm() {
                     className="cursor-pointer"
                     onChange={(e) => {
                       const files = Array.from(e.target.files || []);
-                      updateField("moodboardFiles", files.slice(0, 10));
+                      updateField("moodboard_urls", files.slice(0, 10));
                     }}
                   />
-                  {formData.moodboardFiles.length > 0 && (
+                  {formData.moodboard_urls.length > 0 && (
                     <p className="text-sm text-muted-foreground">
-                      {formData.moodboardFiles.length} file(s) selected
+                      {formData.moodboard_urls?.length} file(s) selected
                     </p>
                   )}
                 </div>
