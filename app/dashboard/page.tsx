@@ -70,7 +70,6 @@ export default function Dashboard() {
   function handleCopyLink(shareToken: string, briefId: string) {
     const shareUrl = `${window.location.origin}/brief/${shareToken}`;
     navigator.clipboard.writeText(shareUrl);
-    alert("Share link copied to clipboard!");
     setCopiedId(briefId);
     setTimeout(() => setCopiedId(null), 2000);
   }
@@ -222,7 +221,7 @@ export default function Dashboard() {
                         handleCopyLink(brief.share_token, brief.id)
                       }
                     >
-                      (copiedId === brief.id ? (
+                      {(copiedId === brief.id ? (
                       <>
                         <Check className="h-3.5 w-3.5" /> Copied!
                       </>
@@ -230,7 +229,7 @@ export default function Dashboard() {
                       <>
                         <LinkIcon className="h-3.5 w-3.5" /> Share
                       </>
-                      ))
+                      ))}
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground w-full">
