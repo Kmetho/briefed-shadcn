@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Briefed
+
+**Turn chaotic client DMs into structured project briefs.**
+
+Briefed is a SaaS platform for creative freelancers — designers, agencies, and anyone tired of losing project details in scattered messages. Share a guided form with your client, get a structured brief back, and download a professional PDF. No client sign-up required.
+
+---
+
+## How It Works
+
+1. **Create a brief** — Fill in the basics: client info, project goals, timeline, budget, and upload a moodboard.
+2. **Share the link** — Send your client a unique link. They fill out the form without needing an account.
+3. **Download the PDF** — Get a clean, professional brief ready for your workflow.
+
+---
+
+## Features
+
+- **Multi-step guided form** — Walks clients through project details step by step for higher completion rates.
+- **Shareable links** — Each brief gets a unique token-based URL. Clients access it instantly, no sign-up needed.
+- **Professional PDF export** — One-click download of a styled, branded PDF brief.
+- **Moodboard uploads** — Clients can attach up to 10 reference images directly in the form.
+- **Dashboard** — View, manage, share, and download all your briefs in one place.
+- **Authentication** — Secure sign-in/sign-up powered by Clerk.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | [Next.js 16](https://nextjs.org/) (App Router) |
+| Language | TypeScript |
+| UI | [shadcn/ui](https://ui.shadcn.com/) + [Radix UI](https://www.radix-ui.com/) + [Tailwind CSS 4](https://tailwindcss.com/) |
+| Database | [Supabase](https://supabase.com/) (PostgreSQL) |
+| Auth | [Clerk](https://clerk.com/) |
+| File Uploads | [UploadThing](https://uploadthing.com/) |
+| PDF Generation | [jsPDF](https://github.com/parallax/jsPDF) |
+| Forms | [React Hook Form](https://react-hook-form.com/) |
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- pnpm
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Kmetho/briefed-shadcn.git
+cd briefed-shadcn
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a `.env.local` file in the root directory:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Clerk
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
 
-## Learn More
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 
-To learn more about Next.js, take a look at the following resources:
+# UploadThing
+UPLOADTHING_SECRET=
+UPLOADTHING_TOKEN=
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Run the Dev Server
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+```
 
-## Deploy on Vercel
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+
+```
+app/
+├── page.tsx                    # Landing page
+├── dashboard/
+│   ├── page.tsx                # User dashboard (all briefs)
+│   └── new/page.tsx            # Create new brief
+├── brief/
+│   └── [token]/page.tsx        # Public shared brief view
+├── sign-in/                    # Clerk sign-in
+├── sign-up/                    # Clerk sign-up
+└── api/uploadthing/            # File upload endpoint
+
+components/
+├── BriefForm.tsx               # Multi-step brief creation form
+└── ui/                         # shadcn/ui components
+
+lib/
+├── supabase/                   # Database client & brief CRUD
+├── generatePDF.ts              # PDF generation logic
+└── uploadthing.ts              # Upload helpers
+```
+
+---
+
+## License
+
+This project is currently unlicensed. All rights reserved.
