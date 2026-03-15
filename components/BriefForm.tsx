@@ -1,6 +1,7 @@
 "use client";
 
 import { type Brief, createBrief } from "@/lib/supabase/briefs";
+import { useUploadThing } from "@/lib/uploadthing";
 import { useUser, useSession } from "@clerk/nextjs";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -50,6 +51,20 @@ export default function BriefForm() {
   const { session } = useSession();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [files, setFiles] = useState<File[]>([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const { startUpload, isUploading } = useUploadThing("imageUploader", {
+    onUploadProgress: (progress) => setUploadProgress(progress),
+    onClientUploadComplete: (res) => {
+      const urls = res.map((file) => file.ufsUrl);
+      updateField("moodboard_urls", urls);
+    },
+    onUploadError: (error) => {
+      console.error("Upload error:", error);
+      alert("Failed to upload files. Please try again.");
+    },
+  });
 
   const [formData, setFormData] = useState<BriefFormData>({
     project_name: "",
@@ -74,19 +89,22 @@ export default function BriefForm() {
     setIsSubmitting(true);
 
     try {
-      await createBrief({
-        user_id: user.id,
-        project_name: formData.project_name,
-        client_name: formData.client_name,
-        client_email: formData.client_email,
-        project_type: formData.project_type,
-        goals: formData.goals,
-        target_audience: formData.target_audience,
-        timeline: formData.timeline,
-        budget: formData.budget,
-        additional_notes: formData.additional_notes,
-        moodboard_urls: formData.moodboard_urls,
-      }, session);
+      await createBrief(
+        {
+          user_id: user.id,
+          project_name: formData.project_name,
+          client_name: formData.client_name,
+          client_email: formData.client_email,
+          project_type: formData.project_type,
+          goals: formData.goals,
+          target_audience: formData.target_audience,
+          timeline: formData.timeline,
+          budget: formData.budget,
+          additional_notes: formData.additional_notes,
+          moodboard_urls: formData.moodboard_urls,
+        },
+        session,
+      );
       router.push("/dashboard?success=true");
     } catch (error) {
       console.log("Error creating brief:", error);
@@ -199,16 +217,23 @@ export default function BriefForm() {
                     Project Type <span className="text-destructive">*</span>
                   </Label>
                   <Select
+                    required
                     value={formData.project_type}
                     onValueChange={(v) => updateField("project_type", v)}
                   >
-                    <SelectTrigger id="project_type">
-                      <SelectValue />
+                    <SelectTrigger id="project_type" className="min-w-45">
+                      <SelectValue placeholder="Select a project type" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="branding">Branding</SelectItem>
-                      <SelectItem value="web">Web Design</SelectItem>
+                      <SelectItem value="logo">Logo Design</SelectItem>
+                      <SelectItem value="packaging">Packaging</SelectItem>
+                      <SelectItem value="web design">Web Design</SelectItem>
+                      <SelectItem value="web development">
+                        Web Development
+                      </SelectItem>
                       <SelectItem value="social">Social Media</SelectItem>
+                      <SelectItem value="photography">Photography</SelectItem>
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
@@ -230,7 +255,9 @@ export default function BriefForm() {
             <>
               <CardHeader>
                 <CardTitle>Project Goals</CardTitle>
-                <CardDescription>What does success look like?</CardDescription>
+                <CardDescription>
+                  Define what you want to accomplish with this project.
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-5">
                 <div className="space-y-2">
@@ -287,7 +314,9 @@ export default function BriefForm() {
             <>
               <CardHeader>
                 <CardTitle>Timeline & Budget</CardTitle>
-                <CardDescription>Set expectations early.</CardDescription>
+                <CardDescription>
+                  Set a realistic timeline and budget for your project.
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-5">
                 <div className="space-y-2">
@@ -304,7 +333,7 @@ export default function BriefForm() {
                   <Label htmlFor="budget">Budget</Label>
                   <Input
                     id="budget"
-                    value={formData.budget} 
+                    value={formData.budget}
                     onChange={(e) => updateField("budget", e.target.value)}
                     placeholder="e.g. $2,000 – $5,000"
                   />
@@ -368,6 +397,20 @@ export default function BriefForm() {
                       updateField("moodboard_urls", files.slice(0, 10));
                     }}
                   />
+
+                  {files.length > 0 && !formData.moodboard_urls.length && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => startUpload(files)}
+                      disabled={isUploading}
+                    >
+                      {isUploading
+                        ? `Uploading...${uploadProgress}%`
+                        : `Upload ${files.length} image(s)`}
+                    </Button>
+                  )}
+
                   {formData.moodboard_urls.length > 0 && (
                     <p className="text-sm text-muted-foreground">
                       {formData.moodboard_urls?.length} file(s) selected
