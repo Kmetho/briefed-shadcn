@@ -2,6 +2,7 @@ import { getBriefByShareToken } from "@/lib/supabase/briefs";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import MoodboardGallery from "@/app/components/MoodboardGallery";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -193,19 +194,7 @@ export default async function SharedBriefPage({
                 </div>
               </CardHeader>
               <CardContent className="pt-4">
-                {/* <p className="leading-relaxed whitespace-pre-wrap">
-                  {brief.additional_notes}
-                </p> */}
-                {moodboardUrls.map((url, index) => (
-                  <Image
-                    key={index}
-                    src={url}
-                    width={500}
-                    height={300}
-                    alt={`Moodboard ${index + 1}`}
-                    className="w-full h-auto rounded-md border border-border shadow-sm"
-                  />
-                ))}
+                <MoodboardGallery urls={moodboardUrls} />
               </CardContent>
             </Card>
           )}
