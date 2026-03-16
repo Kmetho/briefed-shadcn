@@ -56,10 +56,6 @@ export default function BriefForm() {
 
   const { startUpload, isUploading } = useUploadThing("imageUploader", {
     onUploadProgress: (progress) => setUploadProgress(progress),
-    onClientUploadComplete: (res) => {
-      const urls = res.map((file) => file.ufsUrl);
-      updateField("moodboard_urls", urls);
-    },
     onUploadError: (error) => {
       console.error("Upload error:", error);
       alert("Failed to upload files. Please try again.");
@@ -80,7 +76,7 @@ export default function BriefForm() {
   });
 
   function updateField(field: keyof BriefFormData, value: any) {
-    setFormData({ ...formData, [field]: value });
+    setFormData((prev) => ({ ...prev, [field]: value }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -89,6 +85,15 @@ export default function BriefForm() {
     setIsSubmitting(true);
 
     try {
+      let moodboardUrls: string[] = [];
+
+      if (files.length > 0) {
+       const uploadResult = await startUpload(files);
+       if (uploadResult) {
+        moodboardUrls = uploadResult.map((file) => file.ufsUrl);
+       }
+      }
+
       await createBrief(
         {
           user_id: user.id,
@@ -101,7 +106,7 @@ export default function BriefForm() {
           timeline: formData.timeline,
           budget: formData.budget,
           additional_notes: formData.additional_notes,
-          moodboard_urls: formData.moodboard_urls,
+          moodboard_urls: moodboardUrls,
         },
         session,
       );
@@ -393,24 +398,10 @@ export default function BriefForm() {
                     multiple
                     className="cursor-pointer"
                     onChange={(e) => {
-                      const files = Array.from(e.target.files || []);
-                      updateField("moodboard_urls", files.slice(0, 10));
+                      const selected = Array.from(e.target.files || []);
+                      setFiles(selected.slice(0, 10));
                     }}
                   />
-
-                  {files.length > 0 && !formData.moodboard_urls.length && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => startUpload(files)}
-                      disabled={isUploading}
-                    >
-                      {isUploading
-                        ? `Uploading...${uploadProgress}%`
-                        : `Upload ${files.length} image(s)`}
-                    </Button>
-                  )}
-
                   {formData.moodboard_urls.length > 0 && (
                     <p className="text-sm text-muted-foreground">
                       {formData.moodboard_urls?.length} file(s) selected
