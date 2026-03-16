@@ -1,8 +1,7 @@
 import { getBriefByShareToken } from "@/lib/supabase/briefs";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-import MoodboardGallery from "@/app/components/MoodboardGallery";
+import MoodboardGallery from "@/components/MoodboardGallery";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
