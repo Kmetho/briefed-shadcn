@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import { type Brief } from "./supabase/briefs";
 
-// ─── Colour tokens (matching globals.css) ────────────────────────────────────
+// colours matching global theme
 const C = {
   primary: [120, 58, 210] as [number, number, number],
   foreground: [10, 10, 10] as [number, number, number],
@@ -11,15 +11,18 @@ const C = {
   mutedBg: [247, 247, 247] as [number, number, number],
 };
 
-// ─── Layout constants ─────────────────────────────────────────────────────────
+// layout consts
 const PAGE_W = 210;
 const PAGE_H = 297;
 const MARGIN = 20;
 const CONTENT_W = PAGE_W - MARGIN * 2;
+// layout consts - cards
+const CARD_PAD = 6;
+const CARD_RADIUS = 3;
+const CARD_INNER_W = CONTENT_W - CARD_PAD * 2;
 
-// ─── Image helpers ────────────────────────────────────────────────────────────
-
-/** Fetch an image URL and return base64 + real dimensions */
+// img helpers
+// fetch an img url and return base64 and real dimensions
 async function loadImage(
   url: string,
 ): Promise<{ base64: string; width: number; height: number } | null> {
@@ -32,7 +35,7 @@ async function loadImage(
       reader.readAsDataURL(blob);
     });
 
-    // Load into an Image element to get real pixel dimensions
+    // load into an Image element to get real pixel dimensions
     const dims = await new Promise<{ width: number; height: number }>(
       (resolve) => {
         const img = new Image();
@@ -49,7 +52,7 @@ async function loadImage(
   }
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// helpers
 function setColor(
   doc: jsPDF,
   color: [number, number, number],
@@ -68,40 +71,44 @@ function addPageIfNeeded(doc: jsPDF, y: number, needed = 30): number {
   return y;
 }
 
-function sectionHeader(doc: jsPDF, label: string, y: number): number {
-  y = addPageIfNeeded(doc, y, 20);
-
-  // Left accent bar
-  setColor(doc, C.primary, "fill");
-  doc.rect(MARGIN, y - 4, 3, 10, "F");
-
-  // Label
-  doc.setFontSize(9);
-  doc.setFont("helvetica", "bold");
-  setColor(doc, C.primary);
-  doc.text(label.toUpperCase(), MARGIN + 7, y + 3);
-
-  // Separator line
+// draw a card bg and call before rendering content inside it
+function drawCard(doc: jsPDF, x: number, y: number, w: number, h: number) {
+  setColor(doc, C.background, "fill");
   setColor(doc, C.border, "draw");
   doc.setLineWidth(0.3);
-  doc.line(MARGIN, y + 6, PAGE_W - MARGIN, y + 6);
+  doc.roundedRect(x, y, w, h, CARD_RADIUS, CARD_RADIUS, "FD");
+}
 
-  return y + 12;
+// mesuring text block line length without rendering
+function measureTextHeight(doc: jsPDF, text: string, maxWidth: number): number {
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  const lines = doc.splitTextToSize(text, maxWidth);
+  return lines.length * 5.5;
+}
+
+// card header
+function cardHeader(doc: jsPDF, label: string, x: number, y: number): number {
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  setColor(doc, C.muted);
+  doc.text(label.toUpperCase(), x, y);
+  return y + 7;
 }
 
 function bodyText(
   doc: jsPDF,
   text: string,
+  x: number,
   y: number,
-  maxWidth = CONTENT_W,
+  maxWidth = CARD_INNER_W,
 ): number {
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   setColor(doc, C.foreground);
   const lines = doc.splitTextToSize(text, maxWidth);
   lines.forEach((line: string) => {
-    y = addPageIfNeeded(doc, y, 8);
-    doc.text(line, MARGIN, y);
+    doc.text(line, x, y);
     y += 5.5;
   });
   return y;
@@ -111,20 +118,19 @@ function labelValue(
   doc: jsPDF,
   label: string,
   value: string,
+  x: number,
   y: number,
 ): number {
-  y = addPageIfNeeded(doc, y, 8);
-  doc.setFontSize(9);
+  doc.setFontSize(8);
   doc.setFont("helvetica", "bold");
   setColor(doc, C.muted);
-  doc.text(label, MARGIN, y);
+  doc.text(label, x, y);
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   setColor(doc, C.foreground);
-  const labelWidth = doc.getTextWidth(label) + 3;
-  doc.text(value, MARGIN + labelWidth, y);
-  return y + 6;
+  doc.text(value, x, y + 5);
+  return y + 12;
 }
 
 function pill(doc: jsPDF, text: string, x: number, y: number) {
@@ -145,13 +151,12 @@ function pill(doc: jsPDF, text: string, x: number, y: number) {
   doc.text(text, x + padX, y);
 }
 
-// ─── Main export ──────────────────────────────────────────────────────────────
+// main export
 export async function generatePDF(data: Brief) {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   let y = MARGIN;
 
-  // ── Cover block ──────────────────────────────────────────────────────────────
-  // Thin purple top stripe
+  // cover block
   setColor(doc, C.primary, "fill");
   doc.rect(0, 0, PAGE_W, 1.5, "F");
 
@@ -161,127 +166,227 @@ export async function generatePDF(data: Brief) {
   setColor(doc, C.primary);
   doc.text("briefed", MARGIN, y + 6);
 
-  // Date top-right
+  // date
   const dateStr = new Date(data.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-  doc.setFontSize(8);
-  doc.setFont("helvetica", "normal");
-  setColor(doc, C.muted);
-  doc.text(dateStr, PAGE_W - MARGIN - doc.getTextWidth(dateStr), y + 6);
 
   y += 18;
 
-  // Project name — large title
+  // project type pill
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "bold");
+  const projectType =
+    data.project_type.charAt(0).toUpperCase() + data.project_type.slice(1);
+  pill(doc, projectType, MARGIN, y);
+  // date next to pill
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "normal");
+  setColor(doc, C.muted);
+  const pillW = doc.getTextWidth(projectType) + 12;
+  doc.text(dateStr, MARGIN + pillW + 4, y);
+  y += 8;
+
+  // project name
   doc.setFontSize(26);
   doc.setFont("helvetica", "bold");
   setColor(doc, C.foreground);
-  const titleLines = doc.splitTextToSize(data.project_name, CONTENT_W - 40);
+  const titleLines = doc.splitTextToSize(data.project_name, CONTENT_W);
   titleLines.forEach((line: string) => {
     doc.text(line, MARGIN, y);
     y += 12;
   });
 
-  // Project type pill beside title
-  pill(
-    doc,
-    data.project_type.charAt(0).toUpperCase() + data.project_type.slice(1),
-    MARGIN,
-    y,
-  );
+  // project brief by
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  setColor(doc, C.muted);
+  doc.text("Project brief by ", MARGIN, y);
+  const prefixW = doc.getTextWidth("Project brief by ");
+  doc.setFont("helvetica", "bold");
+  setColor(doc, C.foreground);
+  doc.text(data.client_name, MARGIN + prefixW, y);
   y += 10;
 
-  // Divider
+  // divider
   setColor(doc, C.border, "draw");
   doc.setLineWidth(0.4);
   doc.line(MARGIN, y, PAGE_W - MARGIN, y);
   y += 10;
 
-  // ── Client Info ───────────────────────────────────────────────────────────────
-  y = sectionHeader(doc, "Client Information", y);
-  y = labelValue(doc, "Name:", data.client_name, y);
-  if (data.client_email) {
-    y = labelValue(doc, "Email:", data.client_email, y);
+  // client info card
+  {
+    const cardH = data.client_email ? 32 : 24;
+    y = addPageIfNeeded(doc, y, cardH + 4);
+    drawCard(doc, MARGIN, y, CONTENT_W, cardH);
+
+    const cx = MARGIN + CARD_PAD;
+    let cy = y + CARD_PAD;
+
+    cy = cardHeader(doc, "Client information", cx, cy + 3);
+
+    // name & email columns
+    const colW = CARD_INNER_W / 2;
+    labelValue(doc, "Name", data.client_name, cx, cy);
+    if (data.client_email) {
+      labelValue(doc, "Email", data.client_email, cx + colW, cy);
+    }
+
+    y += cardH + 6;
   }
-  y += 6;
 
-  // ── Project Goals ─────────────────────────────────────────────────────────────
-  y = sectionHeader(doc, "Project Goals", y);
-  y = bodyText(doc, data.goals, y);
-  y += 6;
+  // goals card
+  {
+    const textH = measureTextHeight(doc, data.goals, CARD_INNER_W);
+    const cardH = 8 + textH + CARD_PAD * 2;
+    y = addPageIfNeeded(doc, y, cardH + 4);
+    drawCard(doc, MARGIN, y, CONTENT_W, cardH);
 
-  // ── Target Audience ───────────────────────────────────────────────────────────
+    const cx = MARGIN + CARD_PAD;
+    let cy = y + CARD_PAD;
+
+    cy = cardHeader(doc, "Project goals", cx, cy + 3);
+    bodyText(doc, data.goals, cx, cy);
+
+    y += cardH + 6;
+  }
+
+  // target audience
   if (data.target_audience) {
-    y = sectionHeader(doc, "Target Audience", y);
-    y = bodyText(doc, data.target_audience, y);
-    y += 6;
+    const textH = measureTextHeight(doc, data.target_audience, CARD_INNER_W);
+    const cardH = 8 + textH + CARD_PAD * 2;
+    y = addPageIfNeeded(doc, y, cardH + 4);
+    drawCard(doc, MARGIN, y, CONTENT_W, cardH);
+
+    const cx = MARGIN + CARD_PAD;
+    let cy = y + CARD_PAD;
+
+    cy = cardHeader(doc, "Target audience", cx, cy + 3);
+    bodyText(doc, data.target_audience, cx, cy);
+
+    y += cardH + 6;
   }
 
-  // ── Timeline & Budget ─────────────────────────────────────────────────────────
+  // timeline & budget cards
   if (data.timeline || data.budget) {
-    y = sectionHeader(doc, "Timeline & Budget", y);
+    const cardH = 28;
+    y = addPageIfNeeded(doc, y, cardH + 4);
 
     if (data.timeline && data.budget) {
-      // Side-by-side chips
-      const halfW = (CONTENT_W - 6) / 2;
+      const halfW = (CONTENT_W - 4) / 2;
+      const maxValW = halfW - CARD_PAD * 2;
 
-      setColor(doc, C.mutedBg, "fill");
-      setColor(doc, C.border, "draw");
-      doc.setLineWidth(0.3);
-      doc.roundedRect(MARGIN, y, halfW, 16, 2, 2, "FD");
-      doc.roundedRect(MARGIN + halfW + 6, y, halfW, 16, 2, 2, "FD");
-
-      doc.setFontSize(8);
-      doc.setFont("helvetica", "bold");
-      setColor(doc, C.muted);
-      doc.text("TIMELINE", MARGIN + 4, y + 5.5);
-      doc.text("BUDGET", MARGIN + halfW + 10, y + 5.5);
-
-      doc.setFontSize(10);
+      // timeline card
+      drawCard(doc, MARGIN, y, halfW, cardH);
+      let cx = MARGIN + CARD_PAD;
+      let cy = y + CARD_PAD;
+      cardHeader(doc, "Timeline", cx, cy + 3);
+      const tlFontSize = data.timeline.length > 20 ? 11 : 14;
+      doc.setFontSize(tlFontSize);
       doc.setFont("helvetica", "bold");
       setColor(doc, C.foreground);
-      doc.text(data.timeline, MARGIN + 4, y + 12);
-      doc.text(data.budget, MARGIN + halfW + 10, y + 12);
+      const tlLines = doc.splitTextToSize(data.timeline, maxValW);
+      tlLines.forEach((line: string, idx: number) => {
+        doc.text(line, cx, cy + 14 + idx * 5);
+      });
 
-      y += 22;
+      // budget card
+      drawCard(doc, MARGIN + halfW + 4, y, halfW, cardH);
+      cx = MARGIN + halfW + 4 + CARD_PAD;
+      cy = y + CARD_PAD;
+      cardHeader(doc, "Budget", cx, cy + 3);
+      const bgFontSize = data.budget.length > 20 ? 11 : 14;
+      doc.setFontSize(bgFontSize);
+      doc.setFont("helvetica", "bold");
+      setColor(doc, C.foreground);
+      const bgLines = doc.splitTextToSize(data.budget, maxValW);
+      bgLines.forEach((line: string, idx: number) => {
+        doc.text(line, cx, cy + 14 + idx * 5);
+      });
     } else {
-      if (data.timeline) y = labelValue(doc, "Timeline:", data.timeline, y);
-      if (data.budget) y = labelValue(doc, "Budget:", data.budget, y);
-      y += 6;
+      // if only one
+      drawCard(doc, MARGIN, y, CONTENT_W, cardH);
+      const cx = MARGIN + CARD_PAD;
+      const cy = y + CARD_PAD;
+      const label = data.timeline ? "Timeline" : "Budget";
+      const value = data.timeline ?? data.budget ?? "";
+      cardHeader(doc, label, cx, cy + 3);
+      const fontSize = value.length > 20 ? 11 : 14;
+      doc.setFontSize(fontSize);
+      doc.setFont("helvetica", "bold");
+      setColor(doc, C.foreground);
+      const valLines = doc.splitTextToSize(value, CARD_INNER_W);
+      valLines.forEach((line: string, idx: number) => {
+        doc.text(line, cx, cy + 14 + idx * 5);
+      });
     }
+
+    y += cardH + 6;
   }
 
-  // ── Additional Notes ──────────────────────────────────────────────────────────
+  // additional notes
   if (data.additional_notes) {
-    y = addPageIfNeeded(doc, y, 40);
-    y = sectionHeader(doc, "Additional Notes", y);
-    y = bodyText(doc, data.additional_notes, y);
+    const textH = measureTextHeight(doc, data.additional_notes, CARD_INNER_W);
+    const cardH = 8 + textH + CARD_PAD * 2;
+    y = addPageIfNeeded(doc, y, cardH + 4);
+    drawCard(doc, MARGIN, y, CONTENT_W, cardH);
+
+    const cx = MARGIN + CARD_PAD;
+    let cy = y + CARD_PAD;
+
+    cy = cardHeader(doc, "Additional Notes", cx, cy + 3);
+    bodyText(doc, data.additional_notes, cx, cy);
+
+    y += cardH + 6;
   }
 
-  // ── Moodboard ─────────────────────────────────────────────────────────────
+  // moodboard
   if (data.moodboard_urls && data.moodboard_urls.length > 0) {
-    y = addPageIfNeeded(doc, y, 60);
-    y = sectionHeader(doc, "Moodboard", y);
-
-    // Load all images in parallel (fetch + get real dimensions)
+    // loading imgs first
     const images = (
       await Promise.all(data.moodboard_urls.map((url) => loadImage(url)))
     ).filter((img) => img !== null);
 
     if (images.length > 0) {
-      const GAP = 4; // gap between images in mm
+      const GAP = 4;
       const COLS = images.length === 1 ? 1 : images.length === 2 ? 2 : 3;
-      const CELL_W = (CONTENT_W - GAP * (COLS - 1)) / COLS;
-      const MAX_CELL_H = 55; // max height per image in mm
-      const RADIUS = 2.5; // rounded corner radius
+      const GRID_W = CARD_INNER_W;
+      const CELL_W = (GRID_W - GAP * (COLS - 1)) / COLS;
+      const MAX_CELL_H = 55;
 
-      // Process images in rows
+      // calculate total grid height
+      let totalGridH = 0;
       for (let i = 0; i < images.length; i += COLS) {
         const row = images.slice(i, i + COLS);
+        const rowH = Math.max(
+          ...row.map((img) => {
+            const h = CELL_W / (img.width / img.height);
+            return Math.min(h, MAX_CELL_H);
+          }),
+        );
+        totalGridH += rowH + (i > 0 ? GAP : 0);
+      }
 
-        // Calculate each image's height based on real aspect ratio
+      const cardH = 12 + totalGridH + CARD_PAD * 2;
+
+      // check if fits on page and prepare the alternative if not
+      const fitsOnPage = y + cardH + 4 < PAGE_H - 20;
+
+      if (fitsOnPage) {
+        y = addPageIfNeeded(doc, y, cardH + 4);
+        drawCard(doc, MARGIN, y, CONTENT_W, cardH);
+      } else {
+        y = addPageIfNeeded(doc, y, 30);
+      }
+      const cx = MARGIN + CARD_PAD;
+      let cy = y + CARD_PAD;
+      cy = cardHeader(doc, "Moodboard", cx, cy + 3);
+
+      for (let i = 0; i < images.length; i += COLS) {
+        const row = images.slice(i, i + COLS);
+        // calculate img's height based on real aspect ratio
         const rowHeights = row.map((img) => {
           const aspect = img.width / img.height;
           const h = CELL_W / aspect;
@@ -289,13 +394,15 @@ export async function generatePDF(data: Brief) {
         });
         const rowH = Math.max(...rowHeights); // tallest image sets row height
 
-        y = addPageIfNeeded(doc, y, rowH + GAP);
+        if (!fitsOnPage && i > 0) {
+          cy = addPageIfNeeded(doc, cy, rowH + GAP);
+        }
 
         row.forEach((img, j) => {
-          const x = MARGIN + j * (CELL_W + GAP);
+          const x = cx + j * (CELL_W + GAP);
           const aspect = img.width / img.height;
 
-          // Fit image proportionally within the cell
+          // fit img proportionally within the cell
           let drawW = CELL_W;
           let drawH = CELL_W / aspect;
           if (drawH > MAX_CELL_H) {
@@ -303,43 +410,33 @@ export async function generatePDF(data: Brief) {
             drawW = MAX_CELL_H * aspect;
           }
 
-          // Center the image within the cell space
+          // center the img within the cell space
           const offsetX = (CELL_W - drawW) / 2;
           const offsetY = (rowH - drawH) / 2;
 
-          // Draw the image with rounded border
+          // draw the img
           doc.addImage(
             img.base64,
             "JPEG",
             x + offsetX,
-            y + offsetY,
+            cy + offsetY,
             drawW,
             drawH,
-          );
-          setColor(doc, C.border, "draw");
-          doc.setLineWidth(0.3);
-          doc.roundedRect(
-            x + offsetX,
-            y + offsetY,
-            drawW,
-            drawH,
-            RADIUS,
-            RADIUS,
-            "S",
           );
         });
 
-        y += rowH + GAP;
+        cy += rowH + GAP;
       }
+
+      y = cy + CARD_PAD;
     }
   }
 
-  // ── Footer on every page ──────────────────────────────────────────────────────
+  // footer
   const totalPages = (doc.internal as any).pages.length - 1;
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
 
-    // Bottom thin stripe
     setColor(doc, C.mutedBg, "fill");
     doc.rect(0, PAGE_H - 10, PAGE_W, 10, "F");
 

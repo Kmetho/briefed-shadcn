@@ -139,11 +139,13 @@ export default async function SharedBriefPage({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {brief.timeline && (
                 <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                  <CardHeader className="pb-0">
+                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                       <Clock className="h-4 w-4" />
                       TIMELINE
                     </div>
+                  </CardHeader>
+                  <CardContent className="pt-4">
                     <p className="text-2xl font-bold tracking-tight">
                       {brief.timeline}
                     </p>
@@ -152,11 +154,13 @@ export default async function SharedBriefPage({
               )}
               {brief.budget && (
                 <Card>
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                  <CardHeader className="pb-0">
+                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                       <DollarSign className="h-4 w-4" />
                       BUDGET
                     </div>
+                  </CardHeader>
+                  <CardContent className="pt-4">
                     <p className="text-2xl font-bold tracking-tight">
                       {brief.budget}
                     </p>
