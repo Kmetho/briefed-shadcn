@@ -29,7 +29,7 @@ import {
 
 export default function Dashboard() {
   const { user } = useUser();
-  const { session } = useSession(); 
+  const { session } = useSession();
   const [briefs, setBriefs] = useState<Brief[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -51,8 +51,8 @@ export default function Dashboard() {
     loadBriefs();
   }, [user?.id]);
 
-  function handleDownloadPDF(brief: Brief) {
-    generatePDF(brief);
+  async function handleDownloadPDF(brief: Brief) {
+    await generatePDF(brief);
   }
 
   async function handleDelete(id: string) {
@@ -94,7 +94,6 @@ export default function Dashboard() {
             <Button variant="ghost" size="sm" asChild>
               <Link href="/dashboard">Dashboard</Link>
             </Button>
-            <UserButton afterSignOutUrl="/" />
           </div>
         </div>
       </nav>
@@ -221,15 +220,15 @@ export default function Dashboard() {
                         handleCopyLink(brief.share_token, brief.id)
                       }
                     >
-                      {(copiedId === brief.id ? (
-                      <>
-                        <Check className="h-3.5 w-3.5" /> Copied!
-                      </>
+                      {copiedId === brief.id ? (
+                        <>
+                          <Check className="h-3.5 w-3.5" /> Copied!
+                        </>
                       ) : (
-                      <>
-                        <LinkIcon className="h-3.5 w-3.5" /> Share
-                      </>
-                      ))}
+                        <>
+                          <LinkIcon className="h-3.5 w-3.5" /> Share
+                        </>
+                      )}
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground w-full">

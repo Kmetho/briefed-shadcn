@@ -17,6 +17,38 @@ const PAGE_H = 297;
 const MARGIN = 20;
 const CONTENT_W = PAGE_W - MARGIN * 2;
 
+// ─── Image helpers ────────────────────────────────────────────────────────────
+
+/** Fetch an image URL and return base64 + real dimensions */
+async function loadImage(
+  url: string,
+): Promise<{ base64: string; width: number; height: number } | null> {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const base64 = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(blob);
+    });
+
+    // Load into an Image element to get real pixel dimensions
+    const dims = await new Promise<{ width: number; height: number }>(
+      (resolve) => {
+        const img = new Image();
+        img.onload = () =>
+          resolve({ width: img.naturalWidth, height: img.naturalHeight });
+        img.src = base64;
+      },
+    );
+
+    return { base64, width: dims.width, height: dims.height };
+  } catch (error) {
+    console.error("Failed to load image:", error);
+    return null;
+  }
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function setColor(
   doc: jsPDF,
@@ -114,7 +146,7 @@ function pill(doc: jsPDF, text: string, x: number, y: number) {
 }
 
 // ─── Main export ──────────────────────────────────────────────────────────────
-export function generatePDF(data: Brief) {
+export async function generatePDF(data: Brief) {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   let y = MARGIN;
 
@@ -130,7 +162,7 @@ export function generatePDF(data: Brief) {
   doc.text("briefed", MARGIN, y + 6);
 
   // Date top-right
-  const dateStr = new Date().toLocaleDateString("en-US", {
+  const dateStr = new Date(data.created_at).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -226,6 +258,80 @@ export function generatePDF(data: Brief) {
     y = addPageIfNeeded(doc, y, 40);
     y = sectionHeader(doc, "Additional Notes", y);
     y = bodyText(doc, data.additional_notes, y);
+  }
+
+  // ── Moodboard ─────────────────────────────────────────────────────────────
+  if (data.moodboard_urls && data.moodboard_urls.length > 0) {
+    y = addPageIfNeeded(doc, y, 60);
+    y = sectionHeader(doc, "Moodboard", y);
+
+    // Load all images in parallel (fetch + get real dimensions)
+    const images = (
+      await Promise.all(data.moodboard_urls.map((url) => loadImage(url)))
+    ).filter((img) => img !== null);
+
+    if (images.length > 0) {
+      const GAP = 4; // gap between images in mm
+      const COLS = images.length === 1 ? 1 : images.length === 2 ? 2 : 3;
+      const CELL_W = (CONTENT_W - GAP * (COLS - 1)) / COLS;
+      const MAX_CELL_H = 55; // max height per image in mm
+      const RADIUS = 2.5; // rounded corner radius
+
+      // Process images in rows
+      for (let i = 0; i < images.length; i += COLS) {
+        const row = images.slice(i, i + COLS);
+
+        // Calculate each image's height based on real aspect ratio
+        const rowHeights = row.map((img) => {
+          const aspect = img.width / img.height;
+          const h = CELL_W / aspect;
+          return Math.min(h, MAX_CELL_H); // cap at max height
+        });
+        const rowH = Math.max(...rowHeights); // tallest image sets row height
+
+        y = addPageIfNeeded(doc, y, rowH + GAP);
+
+        row.forEach((img, j) => {
+          const x = MARGIN + j * (CELL_W + GAP);
+          const aspect = img.width / img.height;
+
+          // Fit image proportionally within the cell
+          let drawW = CELL_W;
+          let drawH = CELL_W / aspect;
+          if (drawH > MAX_CELL_H) {
+            drawH = MAX_CELL_H;
+            drawW = MAX_CELL_H * aspect;
+          }
+
+          // Center the image within the cell space
+          const offsetX = (CELL_W - drawW) / 2;
+          const offsetY = (rowH - drawH) / 2;
+
+          // Draw the image with rounded border
+          doc.addImage(
+            img.base64,
+            "JPEG",
+            x + offsetX,
+            y + offsetY,
+            drawW,
+            drawH,
+          );
+          setColor(doc, C.border, "draw");
+          doc.setLineWidth(0.3);
+          doc.roundedRect(
+            x + offsetX,
+            y + offsetY,
+            drawW,
+            drawH,
+            RADIUS,
+            RADIUS,
+            "S",
+          );
+        });
+
+        y += rowH + GAP;
+      }
+    }
   }
 
   // ── Footer on every page ──────────────────────────────────────────────────────
