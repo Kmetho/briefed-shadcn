@@ -26,9 +26,11 @@ import {
   Link as LinkIcon,
   Check,
 } from "lucide-react";
-
+import Nav from "@/components/Nav";
+ 
 export default function Dashboard() {
   const { user } = useUser();
+  const userId = user?.id || null;
   const { session } = useSession();
   const [briefs, setBriefs] = useState<Brief[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,19 +86,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Nav */}
-      <nav className="border-b border-border px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="text-xl font-semibold tracking-tight">
-            briefed
-          </Link>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </Button>
-          </div>
-        </div>
-      </nav>
+      <Nav userId={userId} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Stats */}
