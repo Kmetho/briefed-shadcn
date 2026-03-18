@@ -34,9 +34,9 @@ export default function HowItWorks() {
           <Card key={step}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-xs font-mono text-muted-foreground">
+                <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-bold">
                   {step}
-                </span>
+                </div>
                 <Icon className="h-5 w-5 text-primary" />
               </div>
               <h3 className="font-semibold mb-2">{title}</h3>

@@ -88,10 +88,10 @@ export default function BriefForm() {
       let moodboardUrls: string[] = [];
 
       if (files.length > 0) {
-       const uploadResult = await startUpload(files);
-       if (uploadResult) {
-        moodboardUrls = uploadResult.map((file) => file.ufsUrl);
-       }
+        const uploadResult = await startUpload(files);
+        if (uploadResult) {
+          moodboardUrls = uploadResult.map((file) => file.ufsUrl);
+        }
       }
 
       await createBrief(
@@ -112,7 +112,7 @@ export default function BriefForm() {
       );
       router.push("/dashboard?success=true");
     } catch (error) {
-      console.log("Error creating brief:", error);
+      console.error("Error creating brief:", error);
       alert("Failed to create brief. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -404,7 +404,8 @@ export default function BriefForm() {
                   />
                   {formData.moodboard_urls.length > 0 && (
                     <p className="text-sm text-muted-foreground">
-                      {formData.moodboard_urls?.length} file(s) selected
+                      {files.length} image(s) selected — will upload when you
+                      submit
                     </p>
                   )}
                 </div>

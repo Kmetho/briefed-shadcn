@@ -3,7 +3,7 @@
 import { deleteBrief, getUserBriefs, type Brief } from "@/lib/supabase/briefs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useUser, useSession, UserButton } from "@clerk/nextjs";
+import { useUser, useSession } from "@clerk/nextjs";
 import { generatePDF } from "@/lib/generatePDF";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
+  CheckCircle,
+  Sparkles,
   Download,
   Trash2,
   Plus,
@@ -27,7 +29,7 @@ import {
   Check,
 } from "lucide-react";
 import Nav from "@/components/Nav";
- 
+
 export default function Dashboard() {
   const { user } = useUser();
   const userId = user?.id || null;
@@ -93,7 +95,9 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Total Briefs</CardDescription>
+              <CardDescription className="flex items-center gap-1.5">
+                <FileText className="h-3.5 w-3.5" /> Total Briefs
+              </CardDescription>
               <CardTitle className="text-4xl text-primary">
                 {briefs.length}
               </CardTitle>
@@ -101,7 +105,9 @@ export default function Dashboard() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Completed</CardDescription>
+              <CardDescription className="flex items-center gap-1.5">
+                <CheckCircle className="h-3.5 w-3.5" /> Completed
+              </CardDescription>
               <CardTitle className="text-4xl text-primary">
                 {briefs.filter((b) => b.status === "completed").length}
               </CardTitle>
@@ -109,7 +115,9 @@ export default function Dashboard() {
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardDescription>Free Briefs Left</CardDescription>
+              <CardDescription className="flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5" /> Free Briefs Left
+              </CardDescription>
               <CardTitle className="text-4xl text-primary">
                 {freeBriefsLeft}
               </CardTitle>

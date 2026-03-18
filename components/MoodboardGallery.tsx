@@ -8,7 +8,7 @@ export default function MoodboardGallery({ urls }: { urls: string[] }) {
 
   return (
     <>
-      {/* Thumbnail grid */}
+      {/* thumbnail grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {urls.map((url, i) => (
           <button
@@ -27,7 +27,7 @@ export default function MoodboardGallery({ urls }: { urls: string[] }) {
         ))}
       </div>
 
-      {/* Lightbox overlay */}
+      {/* lightbox overlay */}
       {selected && (
         <div
           className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 cursor-zoom-out"

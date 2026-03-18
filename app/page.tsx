@@ -11,18 +11,20 @@ export default async function HomePage() {
   const { userId } = await auth();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Nav userId={userId} />
-      <Hero userId={userId} />
-      {!userId && (
-        <>
-          <HowItWorks />
-          <Separator />
-          <Features />
-          <Separator />
-          <CTA />
-        </>
-      )}
+      <main className="flex-1">
+        <Hero userId={userId} />
+        {!userId && (
+          <>
+            <HowItWorks />
+            <Separator />
+            <Features />
+            <Separator />
+            <CTA />
+          </>
+        )}
+      </main>
       <Footer />
     </div>
   );

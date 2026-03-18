@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, LayoutDashboard, PenLine } from "lucide-react";
 
 export default function Hero({ userId }: { userId: string | null }) {
   return !userId ? (
@@ -16,7 +16,7 @@ export default function Hero({ userId }: { userId: string | null }) {
           <span className="text-muted-foreground">in your DMs.</span>
         </h1>
         <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10">
-          Turn chaotic client messages into structured, actionable project!{" "}
+          Turn chaotic client messages into structured, actionable project!
           <br />
           Send a guided form, get a clean PDF.
         </p>
@@ -27,7 +27,9 @@ export default function Hero({ userId }: { userId: string | null }) {
             </Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
-            <Link href="@/app/brief/example">See example brief</Link>
+            <Link href="/brief/00000000-0000-0000-0000-000000000001">
+              See example brief
+            </Link>
           </Button>
         </div>
       </section>
@@ -56,12 +58,14 @@ export default function Hero({ userId }: { userId: string | null }) {
       </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Button size="lg" asChild className="gap-2">
-          <Link href="@/app/dashboard/page.tsx">
-            Go to your dashboard <ArrowRight className="h-4 w-4" />
+          <Link href="/dashboard">
+            <LayoutDashboard className="h-4 w-4" /> See your briefs
           </Link>
         </Button>
-        <Button size="lg" variant="outline" asChild>
-          <Link href="@/app/dashboard/new/page.tsx">Start a new brief</Link>
+        <Button size="lg" variant="outline" asChild className="gap-2">
+          <Link href="/dashboard/new">
+            <PenLine className="h-4 w-4" /> Create a new brief
+          </Link>
         </Button>
       </div>
     </section>

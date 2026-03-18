@@ -41,7 +41,9 @@ export default function Features() {
           },
         ].map(({ icon: Icon, title, desc }) => (
           <div key={title} className="flex gap-4">
-            <Icon className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+              <Icon className="h-5 w-5 text-primary" />
+            </div>
             <div>
               <h3 className="font-medium mb-1">{title}</h3>
               <p className="text-sm text-muted-foreground">{desc}</p>
