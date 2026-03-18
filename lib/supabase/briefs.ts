@@ -1,4 +1,4 @@
-import { createBrowserClient } from "./client";
+import { createBrowserClient, createPublicClient } from "./client";
 import { createClient } from "@supabase/supabase-js";
 
 export type Brief = {
@@ -21,7 +21,17 @@ export type Brief = {
   status: "draft" | "completed";
 };
 
-// Fetch all briefs for the current user
+export type BriefInvite = {
+  id: string;
+  user_id: string;
+  token: string;
+  client_name: string | null;
+  project_name: string | null;
+  created_at: string;
+  used: boolean;
+};
+
+// fetch all briefs for the current user
 export async function getUserBriefs(
   userId: string,
   session: any,
@@ -37,7 +47,7 @@ export async function getUserBriefs(
   return data ?? [];
 }
 
-// Create a new brief
+// create a new brief
 export async function createBrief(
   brief: Partial<Brief>,
   session: any,
@@ -53,13 +63,13 @@ export async function createBrief(
   return data ?? [];
 }
 
-// Delete a brief
+// delete a brief
 export async function deleteBrief(id: string, session: any): Promise<void> {
   const supabase = createBrowserClient(session);
   await supabase.from("briefs").delete().eq("id", id);
 }
 
-// Get a single brief by share token (for public view)
+// get a single brief by share token (for public view)
 export async function getBriefByShareToken(token: string) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -74,4 +84,76 @@ export async function getBriefByShareToken(token: string) {
 
   if (error) throw error;
   return data ?? [];
+}
+
+// invite (client-side, need session)
+export async function createInvite(
+  invite: Partial<BriefInvite>,
+  session: any,
+): Promise<BriefInvite> {
+  const supabase = createBrowserClient(session);
+  const { data, error } = await supabase
+    .from("brief_invites")
+    .insert(invite)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getUserInvites(
+  userId: string,
+  session: any,
+): Promise<BriefInvite[]> {
+  const supabase = createBrowserClient(session);
+  const { data, error } = await supabase
+    .from("brief_invites")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+// invite (public, no auth needed)
+export async function getInviteByToken(
+  token: string,
+): Promise<BriefInvite | null> {
+  const supabase = createPublicClient();
+  const { data, error } = await supabase
+    .from("brief_invites")
+    .select("*")
+    .eq("token", token)
+    .eq("used", false)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function markInviteUsed(token: string): Promise<void> {
+  const supabase = createPublicClient();
+  const { error } = await supabase
+    .from("brief_invites")
+    .update({ used: true })
+    .eq("token", token);
+
+  if (error) throw error;
+}
+
+// public client for anonymous access - client filling in the form
+export async function createBriefFromInvite(
+  brief: Partial<Brief>,
+): Promise<Brief> {
+  const supabase = createPublicClient();
+  const { data, error } = await supabase
+    .from("brief")
+    .insert(brief)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
 }

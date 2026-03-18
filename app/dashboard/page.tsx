@@ -1,6 +1,11 @@
 "use client";
 
-import { deleteBrief, getUserBriefs, type Brief } from "@/lib/supabase/briefs";
+import {
+  deleteBrief,
+  getUserBriefs,
+  createInvite,
+  type Brief,
+} from "@/lib/supabase/briefs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useUser, useSession } from "@clerk/nextjs";
@@ -27,6 +32,7 @@ import {
   DollarSign,
   Link as LinkIcon,
   Check,
+  Share2,
 } from "lucide-react";
 import Nav from "@/components/Nav";
 
@@ -76,6 +82,19 @@ export default function Dashboard() {
     navigator.clipboard.writeText(shareUrl);
     setCopiedId(briefId);
     setTimeout(() => setCopiedId(null), 2000);
+  }
+
+  async function handleCreateInvite() {
+    if (!user?.id || !session) return;
+
+    try {
+      const invite = await createInvite({ user_id: user.id }, session);
+      const url = `${window.location.origin}/fill/${invite.token}`;
+      await navigator.clipboard.writeText(url);
+      alert("Invite link copied to clipboard! Send it to your client.");
+    } catch (error) {
+      console.error("Error creating invite:", error);
+    }
   }
 
   if (loading) {
@@ -130,11 +149,20 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold tracking-tight">My Briefs</h1>
-          <Button asChild>
-            <Link href="/dashboard/new" className="gap-2">
-              <Plus className="h-4 w-4" /> New Brief
-            </Link>
-          </Button>
+          <div className="flex flex-row gap-3">
+            <Button asChild>
+              <Link href="/dashboard/new" className="gap-2">
+                <Plus className="h-4 w-4" /> New Brief
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleCreateInvite}
+              className="gap-2"
+            >
+              <Share2 className="h-4 w-4" /> Send brief form
+            </Button>
+          </div>
         </div>
 
         {/* Empty state */}

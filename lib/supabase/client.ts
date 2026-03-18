@@ -6,8 +6,15 @@ export function createBrowserClient(session: any) {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       async accessToken() {
-          return session?.getToken() ?? null;
+        return session?.getToken() ?? null;
       },
-    }
+    },
+  );
+}
+
+export function createPublicClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
   );
 }
