@@ -9,7 +9,7 @@ const C = {
   border: [220, 220, 220] as [number, number, number],
   background: [255, 255, 255] as [number, number, number],
   mutedBg: [247, 247, 247] as [number, number, number],
-};
+}; 
 
 // layout consts
 const PAGE_W = 210;
@@ -187,7 +187,7 @@ export async function generatePDF(data: Brief) {
   setColor(doc, C.muted);
   const pillW = doc.getTextWidth(projectType) + 12;
   doc.text(dateStr, MARGIN + pillW + 4, y);
-  y += 8;
+  y += 14;
 
   // project name
   doc.setFontSize(26);
@@ -196,7 +196,7 @@ export async function generatePDF(data: Brief) {
   const titleLines = doc.splitTextToSize(data.project_name, CONTENT_W);
   titleLines.forEach((line: string) => {
     doc.text(line, MARGIN, y);
-    y += 12;
+    y += 10;
   });
 
   // project brief by
