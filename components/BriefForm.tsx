@@ -24,6 +24,8 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { validateStep } from "./validateStep";
 
 const STEPS = [
   { id: 1, label: "Client" },
@@ -32,7 +34,7 @@ const STEPS = [
   { id: 4, label: "Moodboard" },
 ];
 
-type BriefFormData = {
+export type BriefFormData = {
   project_name: string;
   client_name: string;
   client_email: string;
@@ -58,7 +60,7 @@ export default function BriefForm() {
     onUploadProgress: (progress) => setUploadProgress(progress),
     onUploadError: (error) => {
       console.error("Upload error:", error);
-      alert("Failed to upload files. Please try again.");
+      toast.error("Failed to upload files. Please try again.");
     },
   });
 
@@ -113,7 +115,7 @@ export default function BriefForm() {
       router.push("/dashboard?success=true");
     } catch (error) {
       console.error("Error creating brief:", error);
-      alert("Failed to create brief. Please try again.");
+      toast.error("Failed to create brief. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -247,7 +249,9 @@ export default function BriefForm() {
                 <Button
                   type="button"
                   className="w-full"
-                  onClick={() => setStep(2)}
+                  onClick={() => {
+                    if (validateStep(1, formData)) setStep(2);
+                  }}
                 >
                   Continue
                 </Button>
@@ -305,7 +309,9 @@ export default function BriefForm() {
                   <Button
                     type="button"
                     className="flex-1"
-                    onClick={() => setStep(3)}
+                    onClick={() => {
+                      if (validateStep(2, formData)) setStep(3);
+                    }}
                   >
                     Continue
                   </Button>
@@ -370,7 +376,9 @@ export default function BriefForm() {
                   <Button
                     type="button"
                     className="flex-1"
-                    onClick={() => setStep(4)}
+                    onClick={() => {
+                      if (validateStep(3, formData)) setStep(4);
+                    }}
                   >
                     Continue
                   </Button>

@@ -35,6 +35,18 @@ import {
   Share2,
 } from "lucide-react";
 import Nav from "@/components/Nav";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function Dashboard() {
   const { user } = useUser();
@@ -52,8 +64,8 @@ export default function Dashboard() {
         const data = await getUserBriefs(user.id, session);
         setBriefs(data);
       } catch (error) {
-        console.log("Error loading briefs:", error);
-        alert("Failed to load briefs");
+        console.error("Error loading briefs:", error);
+        toast.error("Failed to load briefs");
       } finally {
         setLoading(false);
       }
@@ -66,14 +78,13 @@ export default function Dashboard() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this brief?")) return;
     try {
       await deleteBrief(id, session);
       const updated = briefs.filter((b) => b.id !== id);
       setBriefs(updated);
     } catch (error) {
-      console.log("Error deleting brief:", error);
-      alert("Failed to delete brief");
+      console.error("Error deleting brief:", error);
+      toast.error("Failed to delete brief");
     }
   }
 
@@ -91,9 +102,10 @@ export default function Dashboard() {
       const invite = await createInvite({ user_id: user.id }, session);
       const url = `${window.location.origin}/fill/${invite.token}`;
       await navigator.clipboard.writeText(url);
-      alert("Invite link copied to clipboard! Send it to your client.");
+      toast.success("Invite link copied to clipboard! Send it to your client.");
     } catch (error) {
       console.error("Error creating invite:", error);
+      toast.error("Failed to create an invite. Please try again.");
     }
   }
 
@@ -231,14 +243,38 @@ export default function Dashboard() {
                     >
                       <Download className="h-3.5 w-3.5" /> Download PDF
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(brief.id)}
-                      className="text-destructive hover:text-destructive hover:bg-destructive/10 border-border"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10 border-border"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Delete this brief?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete the brief &quot;{brief.project_name}&quot;.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDelete(brief.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
                     <Button
                       variant="outline"
                       size="sm"

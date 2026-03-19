@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect    } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createPublicClient } from "@/lib/supabase/client";
 import { markInviteUsed } from "@/lib/supabase/briefs";
@@ -22,6 +22,8 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { validateStep } from "./validateStep";
 
 const STEPS = [
   { id: 1, label: "Client" },
@@ -113,7 +115,7 @@ export default function ClientBriefForm({
       router.push("/fill/success");
     } catch (error) {
       console.error("Error submitting brief:", error);
-      alert("Failed to submit brief. Please try again.");
+      toast.error("Failed to submit brief. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -247,7 +249,9 @@ export default function ClientBriefForm({
                 <Button
                   type="button"
                   className="w-full"
-                  onClick={() => setStep(2)}
+                  onClick={() => {
+                    if (validateStep(1, formData)) setStep(2);
+                  }}
                 >
                   Continue
                 </Button>
@@ -305,7 +309,9 @@ export default function ClientBriefForm({
                   <Button
                     type="button"
                     className="flex-1"
-                    onClick={() => setStep(3)}
+                    onClick={() => {
+                      if (validateStep(2, formData)) setStep(3);
+                    }}
                   >
                     Continue
                   </Button>
@@ -370,7 +376,9 @@ export default function ClientBriefForm({
                   <Button
                     type="button"
                     className="flex-1"
-                    onClick={() => setStep(4)}
+                    onClick={() => {
+                      if (validateStep(3, formData)) setStep(4);
+                    }}
                   >
                     Continue
                   </Button>
