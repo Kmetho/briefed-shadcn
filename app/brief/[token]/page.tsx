@@ -28,10 +28,10 @@ export default async function SharedBriefPage({
   });
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen flex flex-col">
       <Nav variant="public" />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+      <div className="flex-1 max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
             <Badge variant="secondary" className="capitalize">

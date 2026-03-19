@@ -1,15 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useUser, useSession } from "@clerk/nextjs";
-import { getBriefById, updateBrief, type Brief } from "@/lib/supabase/briefs";
+import { useSession } from "@clerk/nextjs";
+import { getBriefById } from "@/lib/supabase/briefs";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
 import BriefForm, { type BriefFormData } from "@/components/BriefForm";
 import { toast } from "sonner";
 
 export default function EditBriefPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { user } = useUser();
   const { session } = useSession();
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<BriefFormData>({
@@ -66,6 +67,12 @@ export default function EditBriefPage() {
   }
 
   return (
-    <BriefForm mode="edit" briefId={id as string} initialData={formData} />
+    <div className="min-h-screen flex flex-col">
+      <Nav variant="form" />
+      <main className="flex-1 bg-white py-20 px-4">
+        <BriefForm mode="edit" briefId={id as string} initialData={formData} />
+      </main>
+      <Footer />
+    </div>
   );
 }

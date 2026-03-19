@@ -48,6 +48,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Footer from "@/components/Footer";
 
 export default function Dashboard() {
   const { user } = useUser();
@@ -56,6 +57,7 @@ export default function Dashboard() {
   const [briefs, setBriefs] = useState<Brief[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [inviteCopied, setInviteCopied] = useState(false);
   const freeBriefsLeft = Math.max(0, 3 - briefs.length);
 
   useEffect(() => {
@@ -103,6 +105,8 @@ export default function Dashboard() {
       const invite = await createInvite({ user_id: user.id }, session);
       const url = `${window.location.origin}/fill/${invite.token}`;
       await navigator.clipboard.writeText(url);
+      setInviteCopied(true);
+      setTimeout(() => setInviteCopied(false), 2000);
       toast.success("Invite link copied to clipboard! Send it to your client.");
     } catch (error) {
       console.error("Error creating invite:", error);
@@ -119,10 +123,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Nav userId={userId} />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen flex flex-col">
+      <Nav variant="dashboard" userId={userId} />
+      <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
           <Card>
@@ -168,12 +171,22 @@ export default function Dashboard() {
                 <Plus className="h-4 w-4" /> New Brief
               </Link>
             </Button>
+
             <Button
               variant="outline"
               onClick={handleCreateInvite}
+              disabled={inviteCopied}
               className="gap-2"
             >
-              <Share2 className="h-4 w-4" /> Send brief form
+              {inviteCopied ? (
+                <>
+                  <Check className="h-4 w-4" /> Link copied!
+                </>
+              ) : (
+                <>
+                  <Share2 className="h-4 w-4" /> Send brief form
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -286,7 +299,8 @@ export default function Dashboard() {
                           </AlertDialogTitle>
                           <AlertDialogDescription>
                             This action cannot be undone. This will permanently
-                            delete the brief &quot;{brief.project_name}&quot;.
+                            delete the brief &quot;
+                            {brief.project_name}&quot;.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -310,6 +324,7 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

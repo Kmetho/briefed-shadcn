@@ -12,7 +12,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <Nav userId={userId} />
+      <Nav variant="default" userId={userId} />
       <main className="flex-1">
         <Hero userId={userId} />
         {!userId && (
