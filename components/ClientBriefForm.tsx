@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect    } from "react";
 import { useRouter } from "next/navigation";
 import { createPublicClient } from "@/lib/supabase/client";
 import { markInviteUsed } from "@/lib/supabase/briefs";
@@ -47,6 +47,7 @@ export default function ClientBriefForm({
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [mounted, setMounted] = useState(false);
 
   const [formData, setFormData] = useState({
     project_name: projectName ?? "",
@@ -60,6 +61,18 @@ export default function ClientBriefForm({
     additional_notes: "",
     moodboard_urls: [] as string[],
   });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <p className="text-muted-foreground">Loading form...</p>
+      </div>
+    );
+  }
 
   function updateField(field: string, value: any) {
     setFormData((prev) => ({ ...prev, [field]: value }));
