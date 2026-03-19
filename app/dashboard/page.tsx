@@ -33,6 +33,7 @@ import {
   Link as LinkIcon,
   Check,
   Share2,
+  Pencil,
 } from "lucide-react";
 import Nav from "@/components/Nav";
 import { toast } from "sonner";
@@ -243,6 +244,31 @@ export default function Dashboard() {
                     >
                       <Download className="h-3.5 w-3.5" /> Download PDF
                     </Button>
+
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/dashboard/edit/${brief.id}`}>
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Link>
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        handleCopyLink(brief.share_token, brief.id)
+                      }
+                    >
+                      {copiedId === brief.id ? (
+                        <>
+                          <Check className="h-3.5 w-3.5" /> Copied!
+                        </>
+                      ) : (
+                        <>
+                          <LinkIcon className="h-3.5 w-3.5" /> Share
+                        </>
+                      )}
+                    </Button>
+
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
@@ -274,24 +300,6 @@ export default function Dashboard() {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        handleCopyLink(brief.share_token, brief.id)
-                      }
-                    >
-                      {copiedId === brief.id ? (
-                        <>
-                          <Check className="h-3.5 w-3.5" /> Copied!
-                        </>
-                      ) : (
-                        <>
-                          <LinkIcon className="h-3.5 w-3.5" /> Share
-                        </>
-                      )}
-                    </Button>
                   </div>
                   <p className="text-xs text-muted-foreground w-full">
                     Created {new Date(brief.created_at).toLocaleDateString()}

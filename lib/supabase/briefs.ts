@@ -69,6 +69,40 @@ export async function deleteBrief(id: string, session: any): Promise<void> {
   await supabase.from("briefs").delete().eq("id", id);
 }
 
+// update a brief
+export async function updateBrief(
+  id: string,
+  updates: Partial<Brief>,
+  session: any,
+): Promise<Brief> {
+  const supabase = createBrowserClient(session);
+  const { data, error } = await supabase
+    .from("briefs")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+// get a single brief by id
+export async function getBriefById(
+  id: string,
+  session: any,
+): Promise<Brief | null> {
+  const supabase = createBrowserClient(session);
+  const { data, error } = await supabase
+    .from("briefs")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) return null;
+  return data;
+}
+
 // get a single brief by share token (for public view)
 export async function getBriefByShareToken(token: string) {
   const supabase = createClient(

@@ -1,20 +1,12 @@
 import { getBriefByShareToken } from "@/lib/supabase/briefs";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Nav from "@/components/Nav";
 import MoodboardGallery from "@/components/MoodboardGallery";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Clock,
-  DollarSign,
-  FileText,
-  Mail,
-  Target,
-  User,
-  ArrowRight,
-} from "lucide-react";
+import { Clock, DollarSign, FileText, Mail, Target, User } from "lucide-react";
 
 export default async function SharedBriefPage({
   params,
@@ -37,22 +29,9 @@ export default async function SharedBriefPage({
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Nav */}
-      <nav className="border-b border-border px-6 py-4">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <Link href="/" className="text-xl font-semibold tracking-tight">
-            briefed
-          </Link>
-          <Button size="sm" variant="outline" asChild>
-            <Link href="/sign-up" className="gap-2">
-              Create your own <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </Button>
-        </div>
-      </nav>
+      <Nav variant="public" />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-        {/* Header */}
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
             <Badge variant="secondary" className="capitalize">
@@ -73,9 +52,7 @@ export default async function SharedBriefPage({
 
         <Separator className="mb-10" />
 
-        {/* Content sections */}
         <div className="space-y-8">
-          {/* Client Info */}
           <Card>
             <CardHeader className="pb-0">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
@@ -102,7 +79,6 @@ export default async function SharedBriefPage({
             </CardContent>
           </Card>
 
-          {/* Goals */}
           <Card>
             <CardHeader className="pb-0">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
@@ -117,7 +93,6 @@ export default async function SharedBriefPage({
             </CardContent>
           </Card>
 
-          {/* Target Audience */}
           {brief.target_audience && (
             <Card>
               <CardHeader className="pb-0">
@@ -134,7 +109,6 @@ export default async function SharedBriefPage({
             </Card>
           )}
 
-          {/* Timeline & Budget */}
           {(brief.timeline || brief.budget) && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {brief.timeline && (
@@ -170,7 +144,6 @@ export default async function SharedBriefPage({
             </div>
           )}
 
-          {/* Additional Notes */}
           {brief.additional_notes && (
             <Card>
               <CardHeader className="pb-0">
@@ -187,7 +160,6 @@ export default async function SharedBriefPage({
             </Card>
           )}
 
-          {/* Moodboard Pics */}
           {brief.moodboard_urls && (
             <Card>
               <CardHeader className="pb-0">
@@ -204,7 +176,6 @@ export default async function SharedBriefPage({
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="border-t border-border px-6 py-8 mt-12">
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <span className="font-semibold text-foreground">briefed</span>

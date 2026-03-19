@@ -1,6 +1,5 @@
 "use client";
-
-import { type Brief, createBrief } from "@/lib/supabase/briefs";
+import { createBrief, updateBrief } from "@/lib/supabase/briefs";
 import { useUploadThing } from "@/lib/uploadthing";
 import { useUser, useSession } from "@clerk/nextjs";
 import { useState } from "react";
@@ -23,6 +22,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { validateStep } from "./validateStep";
@@ -33,6 +33,12 @@ const STEPS = [
   { id: 3, label: "Budget" },
   { id: 4, label: "Moodboard" },
 ];
+
+type BriefFormProps = {
+  mode: "create" | "edit";
+  briefId?: string;
+  initialData?: BriefFormData;
+};
 
 export type BriefFormData = {
   project_name: string;
@@ -47,7 +53,11 @@ export type BriefFormData = {
   moodboard_urls: string[];
 };
 
-export default function BriefForm() {
+export default function BriefForm({
+  mode,
+  briefId,
+  initialData,
+}: BriefFormProps) {
   const router = useRouter();
   const { user } = useUser();
   const { session } = useSession();
@@ -64,18 +74,20 @@ export default function BriefForm() {
     },
   });
 
-  const [formData, setFormData] = useState<BriefFormData>({
-    project_name: "",
-    client_name: "",
-    client_email: "",
-    project_type: "",
-    goals: "",
-    target_audience: "",
-    timeline: "",
-    budget: "",
-    additional_notes: "",
-    moodboard_urls: [],
-  });
+  const [formData, setFormData] = useState<BriefFormData>(
+    initialData ?? {
+      project_name: "",
+      client_name: "",
+      client_email: "",
+      project_type: "",
+      goals: "",
+      target_audience: "",
+      timeline: "",
+      budget: "",
+      additional_notes: "",
+      moodboard_urls: [],
+    },
+  );
 
   function updateField(field: keyof BriefFormData, value: any) {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -87,31 +99,29 @@ export default function BriefForm() {
     setIsSubmitting(true);
 
     try {
-      let moodboardUrls: string[] = [];
+      let moodboardUrls = formData.moodboard_urls;
 
       if (files.length > 0) {
         const uploadResult = await startUpload(files);
         if (uploadResult) {
-          moodboardUrls = uploadResult.map((file) => file.ufsUrl);
+          const newUrls = uploadResult.map((file) => file.ufsUrl);
+          moodboardUrls = [...moodboardUrls, ...newUrls];
         }
       }
 
-      await createBrief(
-        {
-          user_id: user.id,
-          project_name: formData.project_name,
-          client_name: formData.client_name,
-          client_email: formData.client_email,
-          project_type: formData.project_type,
-          goals: formData.goals,
-          target_audience: formData.target_audience,
-          timeline: formData.timeline,
-          budget: formData.budget,
-          additional_notes: formData.additional_notes,
-          moodboard_urls: moodboardUrls,
-        },
-        session,
-      );
+      const briefData = {
+        ...formData,
+        moodboard_urls: moodboardUrls,
+      };
+
+      if (mode === "edit" && briefId) {
+        await updateBrief(briefId, briefData, session);
+        toast.success("Brief updated!");
+      } else {
+        await createBrief({ user_id: user.id, ...briefData }, session);
+        toast.success("Brief created!");
+      }
+
       router.push("/dashboard?success=true");
     } catch (error) {
       console.error("Error creating brief:", error);
@@ -410,11 +420,70 @@ export default function BriefForm() {
                       setFiles(selected.slice(0, 10));
                     }}
                   />
+
+                  {/* Existing images (from database — edit mode) */}
                   {formData.moodboard_urls.length > 0 && (
-                    <p className="text-sm text-muted-foreground">
-                      {files.length} image(s) selected — will upload when you
-                      submit
-                    </p>
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Existing images — click to remove
+                      </p>
+                      <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                        {formData.moodboard_urls.map((url, i) => (
+                          <button
+                            key={url}
+                            type="button"
+                            onClick={() => {
+                              updateField(
+                                "moodboard_urls",
+                                formData.moodboard_urls.filter(
+                                  (_, idx) => idx !== i,
+                                ),
+                              );
+                            }}
+                            className="group relative aspect-square rounded-md overflow-hidden border border-border hover:border-destructive transition-colors"
+                          >
+                            <img
+                              src={url}
+                              alt={`Moodboard ${i + 1}`}
+                              className="w-full h-full object-cover group-hover:opacity-50 transition-opacity"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                              <X className="h-5 w-5 text-destructive" />
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* New files selected (preview before upload) */}
+                  {files.length > 0 && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        New images — click to remove
+                      </p>
+                      <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                        {files.map((file, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => {
+                              setFiles(files.filter((_, idx) => idx !== i));
+                            }}
+                            className="group relative aspect-square rounded-md overflow-hidden border border-border hover:border-destructive transition-colors"
+                          >
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`New image ${i + 1}`}
+                              className="w-full h-full object-cover group-hover:opacity-50 transition-opacity"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                              <X className="h-5 w-5 text-destructive" />
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
 
@@ -433,7 +502,13 @@ export default function BriefForm() {
                     className="flex-1"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Creating..." : "Create Brief"}
+                    {isSubmitting
+                      ? mode === "edit"
+                        ? "Saving..."
+                        : "Creating..."
+                      : mode === "edit"
+                        ? "Save Changes"
+                        : "Create Brief"}
                   </Button>
                 </div>
               </CardContent>
