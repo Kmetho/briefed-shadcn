@@ -163,9 +163,6 @@ export default function ClientBriefForm({
             </div>
           ))}
         </div>
-        <p className="text-sm text-muted-foreground">
-          Step {step} of {STEPS.length}
-        </p>
       </div>
 
       <Card>

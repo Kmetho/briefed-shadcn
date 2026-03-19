@@ -1,6 +1,8 @@
 import { getInviteByToken } from "@/lib/supabase/briefs";
 import { notFound } from "next/navigation";
 import ClientBriefForm from "@/components/ClientBriefForm";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
 
 export default async function FillBriefPage({
   params,
@@ -15,13 +17,10 @@ export default async function FillBriefPage({
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <nav className="border-b border-border px-6 py-4">
-        <div className="max-w-2xl mx-auto">
-          <span className="text-xl font-semibold tracking-tight">briefed</span>
-        </div>
-      </nav>
-      <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <Nav variant="public" />
+
+      <main className="flex-1 bg-white py-20 px-4">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold tracking-tight mb-2">
             Fill in your project brief
@@ -36,7 +35,9 @@ export default async function FillBriefPage({
           clientName={invite.client_name}
           projectName={invite.project_name}
         />
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }
