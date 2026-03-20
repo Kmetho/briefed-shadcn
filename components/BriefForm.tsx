@@ -173,9 +173,6 @@ export default function BriefForm({
             </div>
           ))}
         </div>
-        <p className="text-sm text-muted-foreground">
-          Step {step} of {STEPS.length}
-        </p>
       </div>
 
       <Card>
@@ -414,12 +411,18 @@ export default function BriefForm({
                     type="file"
                     accept="image/*"
                     multiple
-                    className="cursor-pointer"
+                    className="cursor-pointer file:cursor-pointer file:px-4 file:py-1 text-transparent w-35"
                     onChange={(e) => {
                       const selected = Array.from(e.target.files || []);
-                      setFiles(selected.slice(0, 10));
+                      setFiles((prev) => [...prev, ...selected].slice(0, 10));
+                      e.target.value = "";
                     }}
                   />
+                  {files.length > 0 && (
+                    <p className="text-sm text-muted-foreground">
+                      {files.length} image(s) selected
+                    </p>
+                  )}
 
                   {/* Existing images (from database — edit mode) */}
                   {formData.moodboard_urls.length > 0 && (

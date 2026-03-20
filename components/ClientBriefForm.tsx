@@ -21,6 +21,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { validateStep } from "./validateStep";
@@ -401,17 +402,47 @@ export default function ClientBriefForm({
                     type="file"
                     accept="image/*"
                     multiple
-                    className="cursor-pointer"
+                    className="cursor-pointer file:cursor-pointer file:px-4 file:py-1 text-transparent w-35"
                     onChange={(e) => {
                       const selected = Array.from(e.target.files || []);
-                      setFiles(selected.slice(0, 10));
+                      setFiles((prev) => [...prev, ...selected].slice(0, 10));
+                      e.target.value = "";
                     }}
                   />
-                  {formData.moodboard_urls.length > 0 && (
+
+                  {files.length > 0 && (
                     <p className="text-sm text-muted-foreground">
-                      {files.length} image(s) selected — will upload when you
-                      submit
+                      {files.length} image(s) selected
                     </p>
+                  )}
+                  
+                  {files.length > 0 && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        New images — click to remove
+                      </p>
+                      <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                        {files.map((file, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => {
+                              setFiles(files.filter((_, idx) => idx !== i));
+                            }}
+                            className="group relative aspect-square rounded-md overflow-hidden border border-border hover:border-destructive transition-colors"
+                          >
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`New image ${i + 1}`}
+                              className="w-full h-full object-cover group-hover:opacity-50 transition-opacity"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                              <X className="h-5 w-5 text-destructive" />
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
 
