@@ -18,7 +18,7 @@ export type Brief = {
   archived: boolean;
   created_at: string;
   updated_at: string;
-  status: "draft" | "completed";
+  status: "draft" | "completed" | "in progress";
 };
 
 export type BriefInvite = {
@@ -60,7 +60,7 @@ export async function createBrief(
     .single();
 
   if (error) throw error;
-  return data ?? [];
+  return data;
 }
 
 // delete a brief
@@ -85,6 +85,21 @@ export async function updateBrief(
 
   if (error) throw error;
   return data;
+}
+
+// update brief's status
+export async function updateBriefStatus(
+  id: string,
+  status: string,
+  session: any,
+): Promise<void> {
+  const supabase = createBrowserClient(session);
+  const { error } = await supabase
+    .from("briefs")
+    .update({ status })
+    .eq("id", id);
+
+  if (error) throw error;
 }
 
 // get a single brief by id
@@ -117,7 +132,7 @@ export async function getBriefByShareToken(token: string) {
     .single();
 
   if (error) throw error;
-  return data ?? [];
+  return data;
 }
 
 // invite (client-side, need session)
@@ -148,7 +163,7 @@ export async function getUserInvites(
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return data ?? [];
+  return data;
 }
 
 // invite (public, no auth needed)
@@ -183,7 +198,7 @@ export async function createBriefFromInvite(
 ): Promise<Brief> {
   const supabase = createPublicClient();
   const { data, error } = await supabase
-    .from("brief")
+    .from("briefs")
     .insert(brief)
     .select()
     .single();

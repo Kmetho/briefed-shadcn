@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 
 export default function FillSuccess() {
   return (
-    <div className="min-h-screen bg-background flex flec-col items-center justify-center">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center">
       <Nav variant="public" />
       <main className="flex-1 text-center px-4">
         <CheckCircle className="h-16 w-16 text-primary mx-auto mb-6" />

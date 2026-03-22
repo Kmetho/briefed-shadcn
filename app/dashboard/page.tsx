@@ -2,6 +2,7 @@
 
 import {
   deleteBrief,
+  updateBriefStatus,
   getUserBriefs,
   createInvite,
   type Brief,
@@ -20,6 +21,13 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import {
   CheckCircle,
@@ -50,6 +58,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import Footer from "@/components/Footer";
 
+const STATUSES = ["all", "draft", "in progress", "completed"] as const;
+type StatusFilter = (typeof STATUSES)[number];
+
 export default function Dashboard() {
   const { user } = useUser();
   const userId = user?.id || null;
@@ -59,6 +70,11 @@ export default function Dashboard() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [inviteCopied, setInviteCopied] = useState(false);
   const freeBriefsLeft = Math.max(0, 3 - briefs.length);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const filteredBriefs =
+    statusFilter === "all"
+      ? briefs
+      : briefs.filter((b) => b.status === statusFilter);
 
   useEffect(() => {
     async function loadBriefs() {
@@ -125,7 +141,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen flex flex-col">
       <Nav variant="dashboard" userId={userId} />
-      <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="flex-1 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-12">
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
           <Card>
@@ -191,40 +207,115 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Sort by status button */}
+        <div className="flex gap-2 mb-6">
+          {STATUSES.map((status) => (
+            <Button
+              key={status}
+              variant={statusFilter === status ? "default" : "outline"}
+              size="sm"
+              onClick={() => setStatusFilter(status)}
+              className="capitalize"
+            >
+              {status}
+            </Button>
+          ))}
+        </div>
+
         {/* Empty state */}
-        {briefs.length === 0 ? (
+        {filteredBriefs.length === 0 ? (
           <Card className="border-dashed">
             <CardContent className="flex flex-col items-center justify-center py-20 text-center">
               <FileText className="h-10 w-10 text-muted-foreground mb-4" />
-              <h2 className="text-xl font-semibold mb-2">No briefs yet</h2>
-              <p className="text-muted-foreground mb-6">
-                Create your first brief to get started.
-              </p>
-              <Button asChild>
-                <Link href="/dashboard/new">
-                  <Plus className="h-4 w-4 mr-2" /> Create Your First Brief
-                </Link>
-              </Button>
+              {statusFilter === "all" ? (
+                <>
+                  <h2 className="text-xl font-semibold mb-2">No briefs yet</h2>
+                  <p className="text-muted-foreground mb-6">
+                    Create your first brief to get started.
+                  </p>
+                  <Button asChild>
+                    <Link href="/dashboard/new">
+                      <Plus className="h-4 w-4 mr-2" /> Create Your First Brief
+                    </Link>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-xl font-semibold mb-2">
+                    No {statusFilter} briefs
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    You don&apos;t have any briefs with this status.
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={() => setStatusFilter("all")}
+                  >
+                    Show all briefs
+                  </Button>
+                </>
+              )}
             </CardContent>
           </Card>
         ) : (
           /* Briefs grid */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {briefs.map((brief) => (
+            {filteredBriefs.map((brief) => (
               <Card key={brief.id} className="flex flex-col">
                 <CardHeader>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base truncate">
-                        {brief.project_name}
-                      </CardTitle>
-                      <CardDescription className="mt-0.5">
-                        {brief.client_name}
-                      </CardDescription>
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-base truncate">
+                          {brief.project_name}
+                        </CardTitle>
+                        <CardDescription className="mt-0.5">
+                          {brief.client_name}
+                        </CardDescription>
+                      </div>
+                      <Badge
+                        variant="secondary"
+                        className="shrink-0 capitalize"
+                      >
+                        {brief.project_type}
+                      </Badge>
                     </div>
-                    <Badge variant="secondary" className="shrink-0 capitalize">
-                      {brief.project_type}
-                    </Badge>
+                    <Select
+                        value={brief.status}
+                        onValueChange={async (
+                          newStatus: "draft" | "completed" | "in progress",
+                        ) => {
+                          try {
+                            await updateBriefStatus(
+                              brief.id,
+                              newStatus,
+                              session,
+                            );
+                            setBriefs((prev) =>
+                              prev.map((b) =>
+                                b.id === brief.id
+                                  ? { ...b, status: newStatus }
+                                  : b,
+                              ),
+                            );
+                            toast.success("Status updated!");
+                          } catch (error) {
+                            console.error("Error updating status:", error);
+                            toast.error("Failed to update status.");
+                          }
+                        }}
+                      >
+                      <SelectTrigger className="w-36 h-7 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="in progress">
+                          In Progress
+                        </SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </CardHeader>
 
@@ -249,7 +340,7 @@ export default function Dashboard() {
                 </CardContent>
 
                 <CardFooter className="flex flex-col gap-3">
-                  <div className="flex gap-2 w-full">
+                  <div className="flex flex-wrap gap-2 w-full">
                     <Button
                       className="flex-1 gap-2"
                       size="sm"
