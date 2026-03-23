@@ -31,7 +31,7 @@ export default async function SharedBriefPage({
     <div className="min-h-screen flex flex-col">
       <Nav variant="public" />
 
-      <div className="flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+      <div className="flex-1 max-w-4xl mx-auto px-4 md:w-3xl sm:px-6 py-10 sm:py-16">
         <div className="mb-8">
           <div className="flex items-center gap-2.5 mb-3">
             <Badge variant="secondary" className="capitalize text-[10px] px-2 py-0.5">
