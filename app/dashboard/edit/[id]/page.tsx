@@ -24,6 +24,7 @@ export default function EditBriefPage() {
     budget: "",
     additional_notes: "",
     moodboard_urls: [],
+    submitted_by: "freelancer",
   });
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export default function EditBriefPage() {
           budget: brief.budget ?? "",
           additional_notes: brief.additional_notes ?? "",
           moodboard_urls: brief.moodboard_urls ?? [],
+          submitted_by: brief.submitted_by ?? "freelancer",
         });
       } catch (error) {
         console.error("Error loading brief:", error);
