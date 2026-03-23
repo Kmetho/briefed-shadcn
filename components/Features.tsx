@@ -1,13 +1,15 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { FileText, Upload, Download, Share2, Zap, Shield } from "lucide-react";
 
 export default function Features() {
   return (
-    <section className="max-w-6xl mx-auto px-6 py-24">
-      <h2 className="text-3xl font-bold tracking-tight mb-14 text-center">
-        Everything you need
+    <section className="max-w-3xl mx-auto px-6 py-20 sm:py-24">
+      <p className="text-xs uppercase tracking-widest text-primary font-medium text-center mb-3">
+        Features
+      </p>
+      <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-center mb-12">
+        Everything you need to brief like a pro.
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8">
         {[
           {
             icon: FileText,
@@ -40,13 +42,13 @@ export default function Features() {
             desc: "Auth powered by Clerk. Your data stays yours.",
           },
         ].map(({ icon: Icon, title, desc }) => (
-          <div key={title} className="flex gap-4">
-            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
-              <Icon className="h-5 w-5 text-primary" />
+          <div key={title} className="flex gap-3.5">
+            <div className="h-9 w-9 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Icon className="h-4 w-4 text-primary" />
             </div>
             <div>
-              <h3 className="font-medium mb-1">{title}</h3>
-              <p className="text-sm text-muted-foreground">{desc}</p>
+              <h3 className="font-medium mb-0.5 text-sm">{title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
             </div>
           </div>
         ))}

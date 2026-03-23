@@ -10,19 +10,19 @@ type NavProps = {
 
 export default function Nav({ variant, userId }: NavProps) {
   return (
-    <nav className="border-b border-border px-6 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="text-xl font-semibold tracking-tight">
+    <nav className="border-b border-border/60 px-6 py-3.5">
+      <div className="max-w-5xl mx-auto flex items-center justify-between">
+        <Link href="/" className="text-lg font-semibold tracking-tight">
           briefed
         </Link>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {variant === "default" && !userId && (
             <>
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild className="text-xs">
                 <Link href="/sign-in">Sign in</Link>
               </Button>
-              <Button size="sm" asChild>
+              <Button size="sm" asChild className="text-xs">
                 <Link href="/sign-up">Get started</Link>
               </Button>
             </>
@@ -30,7 +30,7 @@ export default function Nav({ variant, userId }: NavProps) {
 
           {variant === "default" && userId && (
             <>
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild className="text-xs">
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
               <UserButton />
@@ -39,7 +39,7 @@ export default function Nav({ variant, userId }: NavProps) {
 
           {variant === "dashboard" && (
             <>
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild className="text-xs">
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
               <UserButton />
@@ -48,9 +48,9 @@ export default function Nav({ variant, userId }: NavProps) {
 
           {variant === "form" && (
             <>
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/dashboard" className="gap-2">
-                  <ArrowLeft className="h-3.5 w-3.5" /> Back to Dashboard
+              <Button variant="ghost" size="sm" asChild className="text-xs gap-1.5">
+                <Link href="/dashboard">
+                  <ArrowLeft className="h-3 w-3" /> Back
                 </Link>
               </Button>
               <UserButton />
@@ -58,9 +58,9 @@ export default function Nav({ variant, userId }: NavProps) {
           )}
 
           {variant === "public" && (
-            <Button size="sm" variant="outline" asChild>
-              <Link href="/sign-up" className="gap-2">
-                Create your own <ArrowRight className="h-3.5 w-3.5" />
+            <Button size="sm" variant="outline" asChild className="text-xs gap-1.5">
+              <Link href="/sign-up">
+                Create your own <ArrowRight className="h-3 w-3" />
               </Link>
             </Button>
           )}

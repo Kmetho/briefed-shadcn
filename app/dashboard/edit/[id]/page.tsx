@@ -67,9 +67,9 @@ export default function EditBriefPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Nav variant="form" />
-      <main className="flex-1 bg-white py-20 px-4">
+      <main className="flex-1 bg-background py-10 sm:py-16 px-4">
         <BriefForm mode="edit" briefId={id as string} initialData={formData} />
       </main>
       <Footer />

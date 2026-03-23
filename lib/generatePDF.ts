@@ -3,12 +3,12 @@ import { type Brief } from "./supabase/briefs";
 
 // colours matching global theme
 const C = {
-  primary: [120, 58, 210] as [number, number, number],
-  foreground: [10, 10, 10] as [number, number, number],
-  muted: [90, 90, 90] as [number, number, number],
-  border: [220, 220, 220] as [number, number, number],
-  background: [255, 255, 255] as [number, number, number],
-  mutedBg: [247, 247, 247] as [number, number, number],
+  primary: [186, 122, 29] as [number, number, number],
+  foreground: [31, 27, 23] as [number, number, number],
+  muted: [132, 123, 114] as [number, number, number],
+  border: [221, 216, 208] as [number, number, number],
+  background: [250, 250, 245] as [number, number, number],
+  mutedBg: [237, 233, 226] as [number, number, number],
 }; 
 
 // layout consts
@@ -140,7 +140,7 @@ function pill(doc: jsPDF, text: string, x: number, y: number) {
   const w = textW + padX * 2;
   const h = 6 + padY;
 
-  setColor(doc, [237, 233, 254], "fill"); // light purple bg
+  setColor(doc, [253, 243, 224], "fill"); // light amber bg
   setColor(doc, C.border, "draw");
   doc.setLineWidth(0.2);
   doc.roundedRect(x, y - 5, w, h, 2, 2, "FD");

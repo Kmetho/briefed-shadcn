@@ -51,6 +51,7 @@ export type BriefFormData = {
   budget: string;
   additional_notes: string;
   moodboard_urls: string[];
+  submitted_by: "freelancer" | "client";
 };
 
 export default function BriefForm({
@@ -66,13 +67,17 @@ export default function BriefForm({
   const [files, setFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const { startUpload, isUploading } = useUploadThing("imageUploader", {
-    onUploadProgress: (progress) => setUploadProgress(progress),
-    onUploadError: (error) => {
-      console.error("Upload error:", error);
-      toast.error("Failed to upload files. Please try again.");
-    },
-  });
+const { startUpload } = useUploadThing("imageUploader", {
+  onUploadProgress: (progress) => setUploadProgress(progress),
+  onClientUploadComplete: (res) => {
+    console.log("Client upload complete!", res);
+  },
+  onUploadError: (error) => {
+    console.error("Upload error:", error);
+    toast.error("Failed to upload files. Please try again.");
+  },
+});
+
 
   const [formData, setFormData] = useState<BriefFormData>(
     initialData ?? {
@@ -86,6 +91,7 @@ export default function BriefForm({
       budget: "",
       additional_notes: "",
       moodboard_urls: [],
+      submitted_by: "freelancer",
     },
   );
 
@@ -102,17 +108,24 @@ export default function BriefForm({
       let moodboardUrls = formData.moodboard_urls;
 
       if (files.length > 0) {
+        console.log("Starting upload...");
         const uploadResult = await startUpload(files);
+        console.log("Upload result:", uploadResult); // 👈 ADD THIS
         if (uploadResult) {
           const newUrls = uploadResult.map((file) => file.ufsUrl);
+          console.log("URLs:", newUrls); // 👈 AND THIS
           moodboardUrls = [...moodboardUrls, ...newUrls];
         }
       }
+      console.log("About to save to Supabase..."); // 👈 AND THIS
 
       const briefData = {
         ...formData,
         moodboard_urls: moodboardUrls,
       };
+
+      console.log("Session exists:", !!session);
+      console.log("Token test:", await session?.getToken());
 
       if (mode === "edit" && briefId) {
         await updateBrief(briefId, briefData, session);
@@ -132,16 +145,16 @@ export default function BriefForm({
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4">
+    <div className="max-w-lg mx-auto py-6 sm:py-10 px-4">
       {/* Step indicator */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="flex items-center gap-2 mb-3">
           {STEPS.map((s, i) => (
             <div key={s.id} className="flex items-center gap-2 flex-1">
               <div className="flex items-center gap-2">
                 <div
                   className={cn(
-                    "h-7 w-7 rounded-full flex items-center justify-center text-xs font-medium border-2 transition-colors",
+                    "h-6 w-6 rounded-full flex items-center justify-center text-[11px] font-medium border-2 transition-colors",
                     step > s.id
                       ? "bg-primary border-primary text-primary-foreground"
                       : step === s.id
@@ -153,7 +166,7 @@ export default function BriefForm({
                 </div>
                 <span
                   className={cn(
-                    "text-sm hidden sm:inline",
+                    "text-xs hidden sm:inline",
                     step === s.id
                       ? "font-medium text-foreground"
                       : "text-muted-foreground",
@@ -175,7 +188,7 @@ export default function BriefForm({
         </div>
       </div>
 
-      <Card>
+      <Card className="border-border/60">
         <form onSubmit={handleSubmit}>
           {/* STEP 1 */}
           {step === 1 && (

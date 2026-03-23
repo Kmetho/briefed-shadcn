@@ -19,14 +19,15 @@ export type Brief = {
   created_at: string;
   updated_at: string;
   status: "draft" | "completed" | "in progress";
+  submitted_by: "freelancer" | "client";
 };
 
 export type BriefInvite = {
   id: string;
   user_id: string;
   token: string;
-  client_name: string | null;
-  project_name: string | null;
+  // client_name: string | null;
+  // project_name: string | null;
   created_at: string;
   used: boolean;
 };
@@ -159,8 +160,8 @@ export async function getUserInvites(
   const { data, error } = await supabase
     .from("brief_invites")
     .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+    .eq("user_id", userId);
+    // .order("created_at", { ascending: false });
 
   if (error) throw error;
   return data;

@@ -25,6 +25,7 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { validateStep } from "./validateStep";
+import { useUploadThing } from "@/lib/uploadthing";
 
 const STEPS = [
   { id: 1, label: "Client" },
@@ -33,28 +34,51 @@ const STEPS = [
   { id: 4, label: "Moodboard" },
 ];
 
+type FormData = {
+  project_name: string;
+  client_name: string;
+  client_email: string;
+  project_type: string;
+  goals: string;
+  target_audience: string;
+  timeline: string;
+  budget: string;
+  additional_notes: string;
+  moodboard_urls: string[];
+  submitted_by: "client" | "freelancer";
+};
+
 type ClientBriefFormProps = {
   inviteToken: string;
   userId: string;
-  clientName: string | null;
-  projectName: string | null;
+  // clientName: string | null;
+  // projectName: string | null;
 };
 
 export default function ClientBriefForm({
   inviteToken,
   userId,
-  clientName,
-  projectName,
+  // clientName,
+  // projectName,
 }: ClientBriefFormProps) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  const [formData, setFormData] = useState({
-    project_name: projectName ?? "",
-    client_name: clientName ?? "",
+  const { startUpload, isUploading } = useUploadThing("imageUploader", {
+    onUploadProgress: (progress) => setUploadProgress(progress),
+    onUploadError: (error) => {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload files. Please try again.");
+    },
+  });
+
+  const [formData, setFormData] = useState<FormData>({
+    project_name: "",
+    client_name: "",
     client_email: "",
     project_type: "",
     goals: "",
@@ -62,7 +86,8 @@ export default function ClientBriefForm({
     timeline: "",
     budget: "",
     additional_notes: "",
-    moodboard_urls: [] as string[],
+    moodboard_urls: [],
+    submitted_by: "client",
   });
 
   useEffect(() => {
@@ -86,9 +111,13 @@ export default function ClientBriefForm({
     setIsSubmitting(true);
 
     try {
-      // upload moodboard files if any
-      let moodboardUrls: string[] = [];
-      // skip moodboard uploads for now
+      let moodboardUrls = formData.moodboard_urls;
+
+      const uploadResult = await startUpload(files);
+      if (uploadResult) {
+        const newUrls = uploadResult.map((file) => file.ufsUrl);
+        moodboardUrls = [...moodboardUrls, ...newUrls];
+      }
 
       const supabase = createPublicClient();
       const { error } = await supabase.from("briefs").insert({
@@ -104,7 +133,6 @@ export default function ClientBriefForm({
         additional_notes: formData.additional_notes,
         moodboard_urls: moodboardUrls,
         submitted_by: "client",
-        status: "completed",
       });
 
       if (error) throw error;
@@ -123,16 +151,16 @@ export default function ClientBriefForm({
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4">
+    <div className="max-w-lg mx-auto py-6 sm:py-10 px-4">
       {/* Step indicator */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="flex items-center gap-2 mb-3">
           {STEPS.map((s, i) => (
             <div key={s.id} className="flex items-center gap-2 flex-1">
               <div className="flex items-center gap-2">
                 <div
                   className={cn(
-                    "h-7 w-7 rounded-full flex items-center justify-center text-xs font-medium border-2 transition-colors",
+                    "h-6 w-6 rounded-full flex items-center justify-center text-[11px] font-medium border-2 transition-colors",
                     step > s.id
                       ? "bg-primary border-primary text-primary-foreground"
                       : step === s.id
@@ -144,7 +172,7 @@ export default function ClientBriefForm({
                 </div>
                 <span
                   className={cn(
-                    "text-sm hidden sm:inline",
+                    "text-xs hidden sm:inline",
                     step === s.id
                       ? "font-medium text-foreground"
                       : "text-muted-foreground",
@@ -166,7 +194,7 @@ export default function ClientBriefForm({
         </div>
       </div>
 
-      <Card>
+      <Card className="border-border/60">
         <form onSubmit={handleSubmit}>
           {/* STEP 1 */}
           {step === 1 && (
@@ -415,7 +443,7 @@ export default function ClientBriefForm({
                       {files.length} image(s) selected
                     </p>
                   )}
-                  
+
                   {files.length > 0 && (
                     <div>
                       <p className="text-sm text-muted-foreground mb-2">

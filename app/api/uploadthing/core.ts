@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 
 const f = createUploadthing();
 
-export const fileRouter = {
+export const router = {
   imageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 10 } })
     .middleware(async () => {
       const user = await auth();
@@ -17,4 +17,4 @@ export const fileRouter = {
     }),
 } satisfies FileRouter;
 
-export type fileRouter = typeof fileRouter;
+export type OurFileRouter = typeof router;

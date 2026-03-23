@@ -141,81 +141,82 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen flex flex-col">
       <Nav variant="dashboard" userId={userId} />
-      <div className="flex-1 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-12">
+      <div className="flex-1 w-full max-w-5xl mx-auto px-6 sm:px-10 py-10 sm:py-14">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription className="flex items-center gap-1.5">
-                <FileText className="h-3.5 w-3.5" /> Total Briefs
+        <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
+          <Card className="border-border/60">
+            <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-6">
+              <CardDescription className="flex items-center gap-1.5 text-xs">
+                <FileText className="h-3 w-3" /> Total
               </CardDescription>
-              <CardTitle className="text-4xl text-primary">
+              <CardTitle className="text-2xl sm:text-3xl text-primary font-bold">
                 {briefs.length}
               </CardTitle>
             </CardHeader>
           </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription className="flex items-center gap-1.5">
-                <CheckCircle className="h-3.5 w-3.5" /> Completed
+          <Card className="border-border/60">
+            <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-6">
+              <CardDescription className="flex items-center gap-1.5 text-xs">
+                <CheckCircle className="h-3 w-3" /> Completed
               </CardDescription>
-              <CardTitle className="text-4xl text-primary">
+              <CardTitle className="text-2xl sm:text-3xl text-primary font-bold">
                 {briefs.filter((b) => b.status === "completed").length}
               </CardTitle>
             </CardHeader>
           </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardDescription className="flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5" /> Free Briefs Left
+          <Card className="border-border/60">
+            <CardHeader className="pb-2 px-4 pt-4 sm:px-6 sm:pt-6">
+              <CardDescription className="flex items-center gap-1.5 text-xs">
+                <Sparkles className="h-3 w-3" /> Free Left
               </CardDescription>
-              <CardTitle className="text-4xl text-primary">
+              <CardTitle className="text-2xl sm:text-3xl text-primary font-bold">
                 {freeBriefsLeft}
               </CardTitle>
             </CardHeader>
           </Card>
         </div>
 
-        <Separator className="mb-10" />
+        <Separator className="mb-8" />
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">My Briefs</h1>
-          <div className="flex flex-row gap-3">
-            <Button asChild>
-              <Link href="/dashboard/new" className="gap-2">
-                <Plus className="h-4 w-4" /> New Brief
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <h1 className="text-2xl font-bold tracking-tight">My Briefs</h1>
+          <div className="flex flex-row gap-2">
+            <Button size="sm" asChild className="text-xs gap-1.5">
+              <Link href="/dashboard/new">
+                <Plus className="h-3.5 w-3.5" /> New Brief
               </Link>
             </Button>
 
             <Button
               variant="outline"
+              size="sm"
               onClick={handleCreateInvite}
               disabled={inviteCopied}
-              className="gap-2"
+              className="text-xs gap-1.5"
             >
               {inviteCopied ? (
                 <>
-                  <Check className="h-4 w-4" /> Link copied!
+                  <Check className="h-3.5 w-3.5" /> Copied!
                 </>
               ) : (
                 <>
-                  <Share2 className="h-4 w-4" /> Send brief form
+                  <Share2 className="h-3.5 w-3.5" /> Send form
                 </>
               )}
             </Button>
           </div>
         </div>
 
-        {/* Sort by status button */}
-        <div className="flex gap-2 mb-6">
+        {/* Status filters */}
+        <div className="flex gap-1.5 mb-6">
           {STATUSES.map((status) => (
             <Button
               key={status}
               variant={statusFilter === status ? "default" : "outline"}
               size="sm"
               onClick={() => setStatusFilter(status)}
-              className="capitalize"
+              className="capitalize text-xs h-7 px-3"
             >
               {status}
             </Button>
@@ -224,31 +225,33 @@ export default function Dashboard() {
 
         {/* Empty state */}
         {filteredBriefs.length === 0 ? (
-          <Card className="border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-20 text-center">
-              <FileText className="h-10 w-10 text-muted-foreground mb-4" />
+          <Card className="border-dashed border-border/60">
+            <CardContent className="flex flex-col items-center justify-center py-16 sm:py-20 text-center">
+              <FileText className="h-8 w-8 text-muted-foreground/50 mb-4" />
               {statusFilter === "all" ? (
                 <>
-                  <h2 className="text-xl font-semibold mb-2">No briefs yet</h2>
-                  <p className="text-muted-foreground mb-6">
+                  <h2 className="text-lg font-semibold mb-1.5">No briefs yet</h2>
+                  <p className="text-sm text-muted-foreground mb-6">
                     Create your first brief to get started.
                   </p>
-                  <Button asChild>
+                  <Button size="sm" asChild className="text-xs">
                     <Link href="/dashboard/new">
-                      <Plus className="h-4 w-4 mr-2" /> Create Your First Brief
+                      <Plus className="h-3.5 w-3.5 mr-1.5" /> Create Your First Brief
                     </Link>
                   </Button>
                 </>
               ) : (
                 <>
-                  <h2 className="text-xl font-semibold mb-2">
+                  <h2 className="text-lg font-semibold mb-1.5">
                     No {statusFilter} briefs
                   </h2>
-                  <p className="text-muted-foreground mb-6">
+                  <p className="text-sm text-muted-foreground mb-6">
                     You don&apos;t have any briefs with this status.
                   </p>
                   <Button
                     variant="outline"
+                    size="sm"
+                    className="text-xs"
                     onClick={() => setStatusFilter("all")}
                   >
                     Show all briefs
@@ -259,23 +262,23 @@ export default function Dashboard() {
           </Card>
         ) : (
           /* Briefs grid */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredBriefs.map((brief) => (
-              <Card key={brief.id} className="flex flex-col">
-                <CardHeader>
-                  <div className="space-y-3">
+              <Card key={brief.id} className="flex flex-col border-border/60">
+                <CardHeader className="pb-3">
+                  <div className="space-y-2.5">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <CardTitle className="text-base truncate">
+                        <CardTitle className="text-sm font-semibold truncate">
                           {brief.project_name}
                         </CardTitle>
-                        <CardDescription className="mt-0.5">
+                        <CardDescription className="mt-0.5 text-xs">
                           {brief.client_name}
                         </CardDescription>
                       </div>
                       <Badge
                         variant="secondary"
-                        className="shrink-0 capitalize"
+                        className="shrink-0 capitalize text-[10px] px-2 py-0.5"
                       >
                         {brief.project_type}
                       </Badge>
@@ -305,70 +308,69 @@ export default function Dashboard() {
                           }
                         }}
                       >
-                      <SelectTrigger className="w-36 h-7 text-xs">
+                      <SelectTrigger className="w-32 h-6 text-[11px]">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="in progress">
-                          In Progress
-                        </SelectItem>
+                        <SelectItem value="in progress">In Progress</SelectItem>
                         <SelectItem value="completed">Completed</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </CardHeader>
 
-                <CardContent className="flex-1">
+                <CardContent className="flex-1 pt-0">
                   {brief.goals && (
-                    <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+                    <p className="text-xs text-muted-foreground line-clamp-3 mb-3 leading-relaxed">
                       {brief.goals}
                     </p>
                   )}
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {brief.timeline && (
-                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">
-                        <Clock className="h-3 w-3" /> {brief.timeline}
+                      <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground bg-secondary px-2 py-0.5 rounded">
+                        <Clock className="h-2.5 w-2.5" /> {brief.timeline}
                       </span>
                     )}
                     {brief.budget && (
-                      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">
-                        <DollarSign className="h-3 w-3" /> {brief.budget}
+                      <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground bg-secondary px-2 py-0.5 rounded">
+                        <DollarSign className="h-2.5 w-2.5" /> {brief.budget}
                       </span>
                     )}
                   </div>
                 </CardContent>
 
-                <CardFooter className="flex flex-col gap-3">
-                  <div className="flex flex-wrap gap-2 w-full">
+                <CardFooter className="flex flex-col gap-2.5 pt-0">
+                  <div className="flex flex-wrap gap-1.5 w-full">
                     <Button
-                      className="flex-1 gap-2"
+                      className="flex-1 gap-1.5 text-xs"
                       size="sm"
                       onClick={() => handleDownloadPDF(brief)}
                     >
-                      <Download className="h-3.5 w-3.5" /> Download PDF
+                      <Download className="h-3 w-3" /> PDF
                     </Button>
 
-                    <Button variant="outline" size="sm" asChild>
+                    <Button variant="outline" size="sm" asChild className="h-8 w-8 p-0">
                       <Link href={`/dashboard/edit/${brief.id}`}>
-                        <Pencil className="h-3.5 w-3.5" />
+                        <Pencil className="h-3 w-3" />
                       </Link>
                     </Button>
 
                     <Button
                       variant="outline"
                       size="sm"
+                      className="h-8 px-2.5 text-xs gap-1"
                       onClick={() =>
                         handleCopyLink(brief.share_token, brief.id)
                       }
                     >
                       {copiedId === brief.id ? (
                         <>
-                          <Check className="h-3.5 w-3.5" /> Copied!
+                          <Check className="h-3 w-3" /> Copied
                         </>
                       ) : (
                         <>
-                          <LinkIcon className="h-3.5 w-3.5" /> Share
+                          <LinkIcon className="h-3 w-3" /> Share
                         </>
                       )}
                     </Button>
@@ -378,9 +380,9 @@ export default function Dashboard() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10 border-border"
+                          className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 border-border/60"
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2 className="h-3 w-3" />
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
@@ -390,8 +392,7 @@ export default function Dashboard() {
                           </AlertDialogTitle>
                           <AlertDialogDescription>
                             This action cannot be undone. This will permanently
-                            delete the brief &quot;
-                            {brief.project_name}&quot;.
+                            delete the brief &quot;{brief.project_name}&quot;.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -406,7 +407,7 @@ export default function Dashboard() {
                       </AlertDialogContent>
                     </AlertDialog>
                   </div>
-                  <p className="text-xs text-muted-foreground w-full">
+                  <p className="text-[11px] text-muted-foreground/70 w-full">
                     Created {new Date(brief.created_at).toLocaleDateString()}
                   </p>
                 </CardFooter>

@@ -31,18 +31,18 @@ export default async function SharedBriefPage({
     <div className="min-h-screen flex flex-col">
       <Nav variant="public" />
 
-      <div className="flex-1 max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
-        <div className="mb-10">
-          <div className="flex items-center gap-3 mb-4">
-            <Badge variant="secondary" className="capitalize">
+      <div className="flex-1 max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
+        <div className="mb-8">
+          <div className="flex items-center gap-2.5 mb-3">
+            <Badge variant="secondary" className="capitalize text-[10px] px-2 py-0.5">
               {brief.project_type}
             </Badge>
-            <span className="text-sm text-muted-foreground">{dateStr}</span>
+            <span className="text-xs text-muted-foreground">{dateStr}</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tighter mb-3">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter mb-2">
             {brief.project_name}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Project brief by{" "}
             <span className="text-foreground font-medium">
               {brief.client_name}
@@ -50,27 +50,27 @@ export default async function SharedBriefPage({
           </p>
         </div>
 
-        <Separator className="mb-10" />
+        <Separator className="mb-8" />
 
-        <div className="space-y-8">
-          <Card>
+        <div className="space-y-5">
+          <Card className="border-border/60">
             <CardHeader className="pb-0">
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <User className="h-4 w-4" />
-                CLIENT INFORMATION
+              <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                <User className="h-3 w-3" />
+                Client Information
               </div>
             </CardHeader>
-            <CardContent className="pt-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <CardContent className="pt-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Name</p>
-                  <p className="font-medium">{brief.client_name}</p>
+                  <p className="text-[11px] text-muted-foreground mb-0.5">Name</p>
+                  <p className="text-sm font-medium">{brief.client_name}</p>
                 </div>
                 {brief.client_email && (
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Email</p>
-                    <p className="font-medium flex items-center gap-1.5">
-                      <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                    <p className="text-[11px] text-muted-foreground mb-0.5">Email</p>
+                    <p className="text-sm font-medium flex items-center gap-1.5">
+                      <Mail className="h-3 w-3 text-muted-foreground" />
                       {brief.client_email}
                     </p>
                   </div>
@@ -79,30 +79,30 @@ export default async function SharedBriefPage({
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-border/60">
             <CardHeader className="pb-0">
-              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <FileText className="h-4 w-4" />
-                PROJECT GOALS
+              <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                <FileText className="h-3 w-3" />
+                Project Goals
               </div>
             </CardHeader>
-            <CardContent className="pt-4">
-              <p className="leading-relaxed whitespace-pre-wrap">
+            <CardContent className="pt-3">
+              <p className="text-sm leading-relaxed whitespace-pre-wrap">
                 {brief.goals}
               </p>
             </CardContent>
           </Card>
 
           {brief.target_audience && (
-            <Card>
+            <Card className="border-border/60">
               <CardHeader className="pb-0">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  <Target className="h-4 w-4" />
-                  TARGET AUDIENCE
+                <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                  <Target className="h-3 w-3" />
+                  Target Audience
                 </div>
               </CardHeader>
-              <CardContent className="pt-4">
-                <p className="leading-relaxed whitespace-pre-wrap">
+              <CardContent className="pt-3">
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">
                   {brief.target_audience}
                 </p>
               </CardContent>
@@ -112,30 +112,30 @@ export default async function SharedBriefPage({
           {(brief.timeline || brief.budget) && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {brief.timeline && (
-                <Card>
+                <Card className="border-border/60">
                   <CardHeader className="pb-0">
-                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                      <Clock className="h-4 w-4" />
-                      TIMELINE
+                    <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      Timeline
                     </div>
                   </CardHeader>
-                  <CardContent className="pt-4">
-                    <p className="text-2xl font-bold tracking-tight">
+                  <CardContent className="pt-3">
+                    <p className="text-xl font-bold tracking-tight">
                       {brief.timeline}
                     </p>
                   </CardContent>
                 </Card>
               )}
               {brief.budget && (
-                <Card>
+                <Card className="border-border/60">
                   <CardHeader className="pb-0">
-                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                      <DollarSign className="h-4 w-4" />
-                      BUDGET
+                    <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                      <DollarSign className="h-3 w-3" />
+                      Budget
                     </div>
                   </CardHeader>
-                  <CardContent className="pt-4">
-                    <p className="text-2xl font-bold tracking-tight">
+                  <CardContent className="pt-3">
+                    <p className="text-xl font-bold tracking-tight">
                       {brief.budget}
                     </p>
                   </CardContent>
@@ -145,30 +145,30 @@ export default async function SharedBriefPage({
           )}
 
           {brief.additional_notes && (
-            <Card>
+            <Card className="border-border/60">
               <CardHeader className="pb-0">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  <FileText className="h-4 w-4" />
-                  ADDITIONAL NOTES
+                <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                  <FileText className="h-3 w-3" />
+                  Additional Notes
                 </div>
               </CardHeader>
-              <CardContent className="pt-4">
-                <p className="leading-relaxed whitespace-pre-wrap">
+              <CardContent className="pt-3">
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">
                   {brief.additional_notes}
                 </p>
               </CardContent>
             </Card>
           )}
 
-          {brief.moodboard_urls && (
-            <Card>
+          {brief.moodboard_urls && brief.moodboard_urls.length > 0 && (
+            <Card className="border-border/60">
               <CardHeader className="pb-0">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  <FileText className="h-4 w-4" />
-                  MOODBOARD PICTURES
+                <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-medium text-muted-foreground">
+                  <FileText className="h-3 w-3" />
+                  Moodboard
                 </div>
               </CardHeader>
-              <CardContent className="pt-4">
+              <CardContent className="pt-3">
                 <MoodboardGallery urls={moodboardUrls} />
               </CardContent>
             </Card>
@@ -176,9 +176,9 @@ export default async function SharedBriefPage({
         </div>
       </div>
 
-      <footer className="border-t border-border px-6 py-8 mt-12">
-        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <span className="font-semibold text-foreground">briefed</span>
+      <footer className="border-t border-border/60 px-6 py-6">
+        <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+          <span className="font-semibold text-foreground text-sm tracking-tight">briefed</span>
           <span>
             Want to create your own briefs?{" "}
             <Link
