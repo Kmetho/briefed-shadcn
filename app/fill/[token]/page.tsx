@@ -29,12 +29,7 @@ export default async function FillBriefPage({
             This brief was requested by a freelancer. Fill it in to get started!
           </p>
         </div>
-        <ClientBriefForm
-          inviteToken={token}
-          userId={invite.user_id}
-          clientName={invite.client_name}
-          projectName={invite.project_name}
-        />
+        <ClientBriefForm inviteToken={token} userId={invite.user_id} />
       </main>
 
       <Footer />
