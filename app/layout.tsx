@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans, Syne } from "next/font/google";
+import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
+const syne = Syne({ subsets: ["latin"], variable: "--font-display" });
 
 export const metadata: Metadata = {
   title: "Briefed",
@@ -20,26 +22,26 @@ export default function RootLayout({
     <ClerkProvider
       appearance={{
         variables: {
-          colorPrimary: "var(--primary)",
-          colorPrimaryForeground: "var(--primary-foreground)",
-          colorBackground: "var(--card)",
-          colorForeground: "var(--foreground)",
-          colorMuted: "var(--muted)",
-          colorMutedForeground: "var(--muted-foreground)",
-          colorInput: "var(--input)",
-          colorInputForeground: "var(--foreground)",
-          colorBorder: "var(--border)",
-          colorRing: "var(--ring)",
-          colorDanger: "var(--destructive)",
-          borderRadius: "var(--radius)",
+          colorPrimary: "#ff7f11",
+          colorDanger: "#ef4444",
+          borderRadius: "0.625rem",
           fontFamily: "var(--font-sans)",
+        },
+        elements: {
+          card: "shadow-none border border-border",
+          headerTitle: "font-semibold text-lg",
+          headerSubtitle: "text-muted-foreground text-sm",
+          formButtonPrimary: "font-medium",
+          footerActionLink: "text-primary hover:text-primary/80",
         },
       }}
     >
-      <html lang="en">
-        <body className={`${inter.variable} antialiased`}>
-          {children}
-          <Toaster />
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${dmSans.variable} ${syne.variable} antialiased`}>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+            {children}
+            <Toaster />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

@@ -1,14 +1,14 @@
 import jsPDF from "jspdf";
 import { type Brief } from "./supabase/briefs";
 
-// colours matching global theme
+// colours matching Phosphor theme
 const C = {
-  primary: [186, 122, 29] as [number, number, number],
-  foreground: [31, 27, 23] as [number, number, number],
-  muted: [132, 123, 114] as [number, number, number],
-  border: [221, 216, 208] as [number, number, number],
-  background: [250, 250, 245] as [number, number, number],
-  mutedBg: [237, 233, 226] as [number, number, number],
+  primary: [255, 127, 17] as [number, number, number],
+  foreground: [4, 4, 4] as [number, number, number],
+  muted: [92, 102, 90] as [number, number, number],
+  border: [205, 214, 203] as [number, number, number],
+  background: [240, 247, 238] as [number, number, number],
+  mutedBg: [226, 235, 224] as [number, number, number],
 }; 
 
 // layout consts
@@ -140,7 +140,7 @@ function pill(doc: jsPDF, text: string, x: number, y: number) {
   const w = textW + padX * 2;
   const h = 6 + padY;
 
-  setColor(doc, [253, 243, 224], "fill"); // light amber bg
+  setColor(doc, [213, 245, 211], "fill"); // light green bg
   setColor(doc, C.border, "draw");
   doc.setLineWidth(0.2);
   doc.roundedRect(x, y - 5, w, h, 2, 2, "FD");

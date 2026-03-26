@@ -151,7 +151,7 @@ export default function ClientBriefForm({
   }
 
   return (
-    <div className="max-w-lg mx-auto py-6 sm:py-10 px-4">
+    <div className="max-w-lg mx-auto px-4">
       {/* Step indicator */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-3">

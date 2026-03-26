@@ -4,18 +4,22 @@ import { ArrowRight } from "lucide-react";
 
 export default function CTA() {
   return (
-    <section className="max-w-3xl mx-auto px-6 py-20 sm:py-24 text-center">
-      <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-        Ready to get organised?
-      </h2>
-      <p className="text-muted-foreground mb-8 text-sm sm:text-base">
-        Join freelancers who stopped chasing clients for project details.
-      </p>
-      <Button size="lg" asChild className="gap-2">
-        <Link href="/sign-up">
-          Create your account <ArrowRight className="h-4 w-4" />
-        </Link>
-      </Button>
+    <section className="bg-card border-y border-border min-h-screen flex items-center snap-start">
+      <div className="max-w-5xl mx-auto px-6 py-20 sm:py-28 w-full flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+        <div>
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2 font-[family-name:var(--font-display)]">
+            Ready to get organised?
+          </h2>
+          <p className="text-muted-foreground text-sm sm:text-base">
+            Join freelancers who stopped chasing clients for project details.
+          </p>
+        </div>
+        <Button size="lg" asChild className="gap-2 text-sm font-semibold shrink-0">
+          <Link href="/sign-up">
+            Create your account <ArrowRight className="h-4 w-4" />
+          </Link>
+        </Button>
+      </div>
     </section>
   );
 }

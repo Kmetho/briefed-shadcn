@@ -108,24 +108,17 @@ const { startUpload } = useUploadThing("imageUploader", {
       let moodboardUrls = formData.moodboard_urls;
 
       if (files.length > 0) {
-        console.log("Starting upload...");
         const uploadResult = await startUpload(files);
-        console.log("Upload result:", uploadResult); // 👈 ADD THIS
         if (uploadResult) {
           const newUrls = uploadResult.map((file) => file.ufsUrl);
-          console.log("URLs:", newUrls); // 👈 AND THIS
           moodboardUrls = [...moodboardUrls, ...newUrls];
         }
       }
-      console.log("About to save to Supabase..."); // 👈 AND THIS
 
       const briefData = {
         ...formData,
         moodboard_urls: moodboardUrls,
       };
-
-      console.log("Session exists:", !!session);
-      console.log("Token test:", await session?.getToken());
 
       if (mode === "edit" && briefId) {
         await updateBrief(briefId, briefData, session);
@@ -145,7 +138,7 @@ const { startUpload } = useUploadThing("imageUploader", {
   }
 
   return (
-    <div className="max-w-lg mx-auto py-6 sm:py-10 px-4">
+    <div className="max-w-lg mx-auto px-4">
       {/* Step indicator */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-3">

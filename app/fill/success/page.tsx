@@ -10,8 +10,10 @@ export default function FillSuccess() {
       <Nav variant="public" />
       <main className="flex-1 flex items-center justify-center text-center px-4">
         <div>
-          <CheckCircle className="h-12 w-12 text-primary mx-auto mb-5" />
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
+          <div className="h-16 w-16 rounded-full bg-accent flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="h-8 w-8 text-accent-foreground" />
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3 font-[family-name:var(--font-display)]">
             Brief submitted!
           </h1>
           <p className="text-sm text-muted-foreground mb-8 max-w-sm mx-auto">
