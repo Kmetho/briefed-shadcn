@@ -35,7 +35,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="max-w-5xl mx-auto px-6 py-20 sm:py-28 min-h-screen flex flex-col justify-center snap-start">
+    <section className="max-w-5xl mx-auto px-6 py-20 sm:py-28 min-h-screen flex flex-col justify-center">
       <div className="mb-14">
         <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-3">
           Features

@@ -23,7 +23,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="bg-card border-y border-border min-h-screen flex items-center snap-start">
+    <section className="bg-card border-y border-border min-h-screen flex items-center">
       <div className="max-w-5xl mx-auto px-6 py-20 sm:py-28 w-full">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12">
           {/* Left heading */}
