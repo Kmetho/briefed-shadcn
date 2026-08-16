@@ -76,7 +76,7 @@ export default function EditBriefPage() {
           <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-2">
             Edit brief
           </p>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-[family-name:var(--font-display)]">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display">
             Update your brief
           </h1>
         </div>

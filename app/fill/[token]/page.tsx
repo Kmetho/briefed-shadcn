@@ -25,7 +25,7 @@ export default async function FillBriefPage({
           <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-2">
             Brief form
           </p>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2 font-[family-name:var(--font-display)]">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2 font-display">
             Fill in your project brief
           </h1>
           <p className="text-sm text-muted-foreground">

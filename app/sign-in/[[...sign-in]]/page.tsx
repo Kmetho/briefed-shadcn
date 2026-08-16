@@ -6,7 +6,7 @@ export default function SignInPage() {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
       <Link
         href="/"
-        className="text-2xl font-semibold text-foreground tracking-tight mb-8 font-[family-name:var(--font-display)]"
+        className="text-2xl font-semibold text-foreground tracking-tight mb-8 font-display"
       >
         briefed
       </Link>

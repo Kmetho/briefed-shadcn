@@ -40,7 +40,7 @@ export default function Features() {
         <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-3">
           Features
         </p>
-        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-[family-name:var(--font-display)]">
+        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-display">
           Everything you need to
           <br />
           <span className="text-muted-foreground">brief like a pro.</span>

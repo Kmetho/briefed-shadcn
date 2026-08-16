@@ -40,7 +40,7 @@ export default async function SharedBriefPage({
             </Badge>
             <span className="text-xs text-muted-foreground">{dateStr}</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tighter mb-3 font-[family-name:var(--font-display)]">
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tighter mb-3 font-display">
             {brief.project_name}
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -110,7 +110,7 @@ export default async function SharedBriefPage({
                     <Clock className="h-3 w-3" />
                     Timeline
                   </div>
-                  <p className="text-xl font-extrabold tracking-tight font-[family-name:var(--font-display)]">
+                  <p className="text-xl font-extrabold tracking-tight font-display">
                     {brief.timeline}
                   </p>
                 </div>
@@ -121,7 +121,7 @@ export default async function SharedBriefPage({
                     <DollarSign className="h-3 w-3" />
                     Budget
                   </div>
-                  <p className="text-xl font-extrabold tracking-tight font-[family-name:var(--font-display)]">
+                  <p className="text-xl font-extrabold tracking-tight font-display">
                     {brief.budget}
                   </p>
                 </div>
@@ -157,7 +157,7 @@ export default async function SharedBriefPage({
 
       <footer className="border-t border-border px-6 py-6">
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-          <span className="font-bold text-foreground text-sm tracking-tight font-[family-name:var(--font-display)]">
+          <span className="font-bold text-foreground text-sm tracking-tight font-display">
             briefed
           </span>
           <span>

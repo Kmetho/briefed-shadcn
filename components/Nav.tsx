@@ -15,7 +15,7 @@ export default function Nav({ variant, userId }: NavProps) {
       <div className="max-w-5xl mx-auto flex items-center justify-between">
         <Link
           href="/"
-          className="text-lg font-bold tracking-tight font-[family-name:var(--font-display)]"
+          className="text-lg font-bold tracking-tight font-display"
         >
           briefed
         </Link>

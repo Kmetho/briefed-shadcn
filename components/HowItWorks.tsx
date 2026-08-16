@@ -31,7 +31,7 @@ export default function HowItWorks() {
             <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-3">
               How it works
             </p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-[family-name:var(--font-display)]">
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-display">
               Three steps
               <br />
               to a clean brief.
@@ -43,7 +43,7 @@ export default function HowItWorks() {
             {steps.map(({ icon: Icon, step, title, desc }) => (
               <div key={step} className="flex gap-5">
                 <div className="shrink-0">
-                  <div className="h-10 w-10 rounded-full bg-accent flex items-center justify-center text-xs font-bold tracking-tight text-accent-foreground font-[family-name:var(--font-display)]">
+                  <div className="h-10 w-10 rounded-full bg-accent flex items-center justify-center text-xs font-bold tracking-tight text-accent-foreground font-display">
                     {step}
                   </div>
                 </div>

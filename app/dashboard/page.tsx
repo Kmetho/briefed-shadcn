@@ -13,11 +13,7 @@ import { useUser, useSession } from "@clerk/nextjs";
 import { generatePDF } from "@/lib/generatePDF";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -141,7 +137,7 @@ export default function Dashboard() {
             <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-2">
               Dashboard
             </p>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-[family-name:var(--font-display)]">
+            <h1 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight font-display">
               My Briefs
             </h1>
           </div>
@@ -177,7 +173,7 @@ export default function Dashboard() {
             <p className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 mb-1">
               <FileText className="h-3 w-3" /> Total
             </p>
-            <p className="text-2xl sm:text-3xl font-extrabold text-foreground font-[family-name:var(--font-display)]">
+            <p className="text-2xl sm:text-3xl font-bold text-foreground font-display">
               {briefs.length}
             </p>
           </div>
@@ -185,7 +181,7 @@ export default function Dashboard() {
             <p className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 mb-1">
               <CheckCircle className="h-3 w-3" /> Completed
             </p>
-            <p className="text-2xl sm:text-3xl font-extrabold text-foreground font-[family-name:var(--font-display)]">
+            <p className="text-2xl sm:text-3xl font-bold text-foreground font-display">
               {briefs.filter((b) => b.status === "completed").length}
             </p>
           </div>
@@ -193,7 +189,7 @@ export default function Dashboard() {
             <p className="text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 mb-1">
               <Clock className="h-3 w-3" /> In Progress
             </p>
-            <p className="text-2xl sm:text-3xl font-extrabold text-foreground font-[family-name:var(--font-display)]">
+            <p className="text-2xl sm:text-3xl font-bold text-foreground font-display">
               {briefs.filter((b) => b.status === "in progress").length}
             </p>
           </div>
@@ -222,7 +218,7 @@ export default function Dashboard() {
             <FileText className="h-8 w-8 text-muted-foreground/40 mb-4" />
             {statusFilter === "all" ? (
               <>
-                <h2 className="text-lg font-semibold mb-1.5 font-[family-name:var(--font-display)]">
+                <h2 className="text-lg font-semibold mb-1.5 font-display">
                   No briefs yet
                 </h2>
                 <p className="text-sm text-muted-foreground mb-6">
@@ -236,7 +232,7 @@ export default function Dashboard() {
               </>
             ) : (
               <>
-                <h2 className="text-lg font-semibold mb-1.5 font-[family-name:var(--font-display)]">
+                <h2 className="text-lg font-semibold mb-1.5 font-display">
                   No {statusFilter} briefs
                 </h2>
                 <p className="text-sm text-muted-foreground mb-6">
@@ -286,9 +282,7 @@ export default function Dashboard() {
                         await updateBriefStatus(brief.id, newStatus, session);
                         setBriefs((prev) =>
                           prev.map((b) =>
-                            b.id === brief.id
-                              ? { ...b, status: newStatus }
-                              : b,
+                            b.id === brief.id ? { ...b, status: newStatus } : b,
                           ),
                         );
                         toast.success("Status updated!");
@@ -383,7 +377,7 @@ export default function Dashboard() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle className="font-[family-name:var(--font-display)]">
+                          <AlertDialogTitle className="font-display">
                             Delete this brief?
                           </AlertDialogTitle>
                           <AlertDialogDescription>
@@ -404,8 +398,7 @@ export default function Dashboard() {
                     </AlertDialog>
                   </div>
                   <p className="text-[11px] text-muted-foreground/70 w-full">
-                    Created{" "}
-                    {new Date(brief.created_at).toLocaleDateString()}
+                    Created {new Date(brief.created_at).toLocaleDateString()}
                   </p>
                 </CardFooter>
               </Card>

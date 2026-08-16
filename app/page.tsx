@@ -10,7 +10,7 @@ export default async function HomePage() {
   const { userId } = await auth();
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="bg-background text-foreground flex flex-col">
       <Nav variant="default" userId={userId} />
       <main className="flex-1">
         <Hero userId={userId} />

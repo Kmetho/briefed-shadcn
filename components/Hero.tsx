@@ -9,11 +9,11 @@ export default function Hero({ userId }: { userId: string | null }) {
         Built for creative freelancers
       </p>
 
-      <h1 className="text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tighter leading-[0.95] mb-6 font-[family-name:var(--font-display)]">
+      <h1 className="text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tighter leading-[0.95] mb-6 font-display">
         Stop losing
         <br />
         briefs in{" "}
-        <span className="bg-gradient-to-r from-[#ff7f11] via-[#9d8df1] to-[#b9ffb7] bg-clip-text text-transparent">
+        <span className="bg-linear-to-r from-[#ff7f11] via-[#9d8df1] to-[#b9ffb7] bg-clip-text text-transparent">
           your DMs.
         </span>
       </h1>
@@ -55,10 +55,10 @@ export default function Hero({ userId }: { userId: string | null }) {
         Welcome back
       </p>
 
-      <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tighter leading-[0.95] mb-6 font-[family-name:var(--font-display)]">
+      <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tighter leading-[0.95] mb-6 font-display">
         Your briefs,
         <br />
-        <span className="bg-gradient-to-r from-[#ff7f11] via-[#9d8df1] to-[#b9ffb7] bg-clip-text text-transparent">
+        <span className="bg-linear-to-r from-[#ff7f11] via-[#9d8df1] to-[#b9ffb7] bg-clip-text text-transparent">
           all in one place.
         </span>
       </h1>
